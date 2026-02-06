@@ -3,53 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - FINAL</title>
+    <title>Continental 2026 - Finálna Verzia</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        
-        /* ČIERNE SKRATKY DNÍ */
-        .dni-skratky { color: #000000 !important; font-weight: 900 !important; font-size: 11px !important; text-transform: uppercase; }
-
-        /* VÝRAZNÉ HODINY */
-        .suma-hodin-box { background-color: #000000 !important; color: #ffffff !important; border-bottom: 4px solid #facc15 !important; font-weight: 900 !important; padding: 6px 0; border-radius: 14px; margin-top: 12px; font-size: 1.1rem !important; }
-
-        /* FARBY SMEN */
-        .zltatest-ranna { background-color: #facc15 !important; border: 1px solid #ca8a04 !important; }
-        .modra-poobedna { background-color: #3b82f6 !important; }
-        .cierna-nocna { background-color: #0f172a !important; color: white !important; }
-
-        /* SVIATKY - ČERVENÉ */
-        .sviatok-cerveny { background-color: #ef4444 !important; color: white !important; border: 1px solid #b91c1c !important; }
-
-        /* ODSTÁVKA - ČERVENÝ RÁM */
-        .odstavka-fix-red { 
-            background-image: repeating-linear-gradient(45deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.1) 5px, rgba(239, 68, 68, 0.2) 5px, rgba(239, 68, 68, 0.2) 10px) !important;
-            border: 3.5px solid #ef4444 !important;
-        }
-        
-        .day-num { color: #000000 !important; font-weight: 950 !important; font-size: 1.15rem; }
-        .cierna-nocna .day-num, .sviatok-cerveny .day-num { color: #ffffff !important; }
-        .vyplata-zelena { background-color: #22c55e !important; border: 2px solid #166534 !important; color: white !important; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .shutdown-pattern { background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.1) 5px, rgba(239, 68, 68, 0.1) 10px); }
+        .day-num { color: #000000 !important; font-weight: 900 !important; font-size: 1.1rem; }
+        .nočná .day-num, .sviatok-bg .day-num { color: #ffffff !important; }
+        .dni-skratky { color: #000000 !important; font-weight: 900 !important; }
+        .suma-hodin { background-color: #000000 !important; color: #ffffff !important; font-weight: 900 !important; border-radius: 12px; }
     </style>
 </head>
-<body class="bg-slate-100 p-2 text-slate-900 text-center">
+<body class="bg-slate-100 p-2 md:p-4 text-slate-900">
     <div class="max-w-[1600px] mx-auto">
-        <header class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5 mb-6">
-            <h1 class="font-black text-3xl uppercase italic text-orange-600 tracking-tighter leading-none">Continental 2026</h1>
-            <p class="text-[10px] font-bold text-slate-500 uppercase mt-2">Ranná: Žltá | Sviatky: Červené | Čierne dni</p>
+        <header class="bg-white rounded-3xl shadow-sm border border-slate-200 p-4 mb-6 text-center">
+            <h1 class="text-3xl font-black uppercase italic tracking-tighter text-orange-600">Continental 2026</h1>
             <div id="teamButtons" class="flex justify-center gap-2 mt-4"></div>
         </header>
 
         <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"></div>
 
-        <footer class="bg-white rounded-3xl border border-slate-200 p-6 grid grid-cols-2 md:grid-cols-5 gap-4 no-print">
-            <div class="zltatest-ranna p-3 rounded-xl font-black text-xs uppercase shadow-sm">Ranná</div>
-            <div class="modra-poobedna p-3 rounded-xl font-black text-xs uppercase shadow-sm">Poobedná</div>
-            <div class="cierna-nocna p-3 rounded-xl font-black text-xs uppercase shadow-sm">Nočná</div>
-            <div class="sviatok-cerveny p-3 rounded-xl font-black text-xs uppercase shadow-sm">Sviatok 🚩</div>
-            <div class="odstavka-fix-red p-3 rounded-xl font-black text-xs text-red-600 uppercase">Odstávka</div>
+        <footer class="bg-white rounded-3xl border border-slate-200 p-6 grid grid-cols-2 md:grid-cols-5 gap-3 text-center text-[10px] font-black uppercase">
+            <div class="bg-[#FFD700] p-3 rounded-xl border border-yellow-600 shadow-sm">Ranná</div>
+            <div class="bg-[#FF8C00] p-3 rounded-xl text-white shadow-sm">Poobedná</div>
+            <div class="bg-[#483D8B] p-3 rounded-xl text-white shadow-sm">Nočná</div>
+            <div class="bg-red-600 p-3 rounded-xl text-white shadow-sm">Sviatok 🚩</div>
+            <div class="bg-green-600 p-3 rounded-xl text-white shadow-sm">Výplata 💶</div>
         </footer>
     </div>
 
@@ -58,8 +39,8 @@
         const months = ['Január','Február','Marec','Apríl','Máj','Jún','Júl','August','September','Október','November','December'];
         const payDays = {0:9, 1:6, 2:6, 3:9, 4:8, 5:5, 6:7, 7:7, 8:7, 9:7, 10:6, 11:7};
         
-        // Zadané sviatky: 1.5., 5.6., 29.8., 1.11.
-        const specialHolidays = ['2026-05-01', '2026-06-05', '2026-08-29', '2026-11-01'];
+        // OPRAVENÉ SVIATKY: MonthIndex-Day (0-Jan, 4-Maj, 5-Jun, 7-Aug, 10-Nov)
+        const holidays = ["0-1", "0-6", "3-3", "3-6", "4-1", "5-5", "7-29", "10-1", "11-24", "11-25", "11-26"];
 
         const pattern = ['R','R','R','R', 'N','N','N', 'V','V','V','V', 'R','R','R', 'N','N','N','N', 'V','V','V', 'P','P','P','P','P', 'V','V'];
 
@@ -71,11 +52,11 @@
             return pattern[idx] === 'V' ? '' : pattern[idx];
         }
 
-        function isShutdown(d, m) {
-            if (m === 0 && d >= 1 && d <= 6) return true; // Január
-            if (m === 3 && d >= 3 && d <= 6) return true; // Veľká noc
-            if (m === 6 && d >= 20 && d <= 26) return true; // Leto
-            if (m === 11 && d >= 22) return true; // December
+        function isShut(d, m) {
+            if (m === 0 && d <= 6) return true;
+            if (m === 3 && d >= 3 && d <= 6) return true;
+            if (m === 6 && d >= 20 && d <= 26) return true;
+            if (m === 11 && d >= 22) return true;
             return false;
         }
 
@@ -86,42 +67,49 @@
                 let hours = 0;
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-200";
-                let h = `<div class="mb-4 px-2"><h2 class="font-black text-slate-800 uppercase italic text-sm tracking-tighter">${name}</h2></div><div class="grid grid-cols-7 gap-1 dni-skratky text-center mb-2"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div></div><div class="grid grid-cols-7 gap-1">`;
+                let h = `<div class="flex justify-between items-center mb-4 px-2"><h2 class="font-black text-slate-800 uppercase italic text-sm">${name}</h2><div class="bg-slate-100 px-3 py-1 rounded-full text-[9px] font-black h-sum"></div></div><div class="grid grid-cols-7 gap-1 dni-skratky text-[10px] text-center mb-2 uppercase"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div></div><div class="grid grid-cols-7 gap-1">`;
                 const first = new Date(2026, mIdx, 1);
                 for(let i=1; i<(first.getDay()||7); i++) h += '<div></div>';
                 for(let d=1; d<=new Date(2026, mIdx+1, 0).getDate(); d++) {
                     const date = new Date(2026, mIdx, d);
-                    const dateStr = date.toISOString().split('T')[0];
                     const shift = getShift(date, currentTeam);
+                    const isHoliday = holidays.includes(`${mIdx}-${d}`);
                     const isPay = (d === payDays[mIdx]);
-                    const isShut = isShutdown(d, mIdx);
-                    const isHol = specialHolidays.includes(dateStr);
+                    const isShutdown = isShut(d, mIdx);
 
                     if(shift) hours += 8;
-                    let c = "bg-slate-50";
-                    if(shift==='R') c = "zltatest-ranna";
-                    if(shift==='P') c = "modra-poobedna";
-                    if(shift==='N') c = "cierna-nocna";
-                    if(isHol) c = "sviatok-cerveny"; // SVIATKY MAJÚ PREDNOSŤ
-                    if(isPay && !isHol) c = "vyplata-zelena";
+                    let bg = "bg-slate-50";
+                    if(shift==='R') bg = "bg-[#FFD700]";
+                    if(shift==='P') bg = "bg-[#FF8C00]";
+                    if(shift==='N') bg = "bg-[#483D8B] nočná";
                     
-                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-xl relative ${c} ${isShut && !isPay && !isHol ? 'odstavka-fix-red' : ''}">
+                    // SVIATOK MÁ NAJVYŠŠIU PRIORITU (Červená)
+                    let holidayClass = "";
+                    if(isHoliday) { 
+                        bg = "bg-red-600 sviatok-bg"; 
+                        holidayClass = "ring-2 ring-red-400";
+                    } else if(isPay) {
+                        bg = "bg-green-600";
+                    }
+
+                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-xl relative ${bg} ${holidayClass} ${isShutdown && !isHoliday && !isPay ? 'shutdown-pattern border-2 border-red-500' : ''}">
                             <span class="day-num">${d}</span>
-                            <span class="text-[8px] font-black uppercase ${shift==='N'||isHol||isPay?'text-white':'text-black'}">${isPay && !shift && !isHol ? '€' : (isHol ? '🚩' : shift)}</span>
+                            <span class="text-[8px] font-black uppercase ${shift==='N'||isHoliday||isPay?'text-white':'text-black'}">${isHoliday ? '🚩' : (isPay && !shift ? '€' : shift)}</span>
                           </div>`;
                 }
-                h += `</div><div class="suma-hodin-box uppercase italic tracking-widest">${hours} HODÍN</div>`; 
+                h += `</div><div class="mt-4 suma-hodin py-2 text-center italic text-lg uppercase">${hours} HODÍN</div>`;
                 card.innerHTML = h; grid.appendChild(card);
             });
+            lucide.createIcons();
         }
 
-        const btnCont = document.getElementById('teamButtons');
+        const container = document.getElementById('teamButtons');
         ['A','B','C','D'].forEach(t => {
             const b = document.createElement('button');
             b.innerText = t;
             b.className = `w-12 h-12 rounded-xl font-black text-xl transition-all ` + (t === currentTeam ? "bg-orange-500 text-white shadow-md" : "bg-white text-slate-400 border border-slate-200");
             b.onclick = () => { currentTeam = t; render(); updateBtn(); };
-            btnCont.appendChild(b);
+            container.appendChild(b);
         });
         function updateBtn() {
             document.querySelectorAll('#teamButtons button').forEach(el => {
