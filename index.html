@@ -4,34 +4,40 @@
     <meta charset="UTF-8">
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Continental 2026</title>
+    <title>Continental 2026 - Výplata</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .shutdown { background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.2) 5px, rgba(239, 68, 68, 0.2) 10px); border: 2px solid #ef4444 !important; }
-        .holiday-text { color: #ef4444 !important; font-weight: 900 !important; border: 1px solid #ef4444; border-radius: 5px; padding: 1px; }
-        @media print { .no-print { display: none !important; } }
+        .holiday-text { color: #ef4444 !important; font-weight: 900 !important; text-decoration: underline; }
+        .payday { background-color: #16a34a !important; color: white !important; font-weight: 900 !important; border: 3px solid #14532d !important; position: relative; z-index: 10; shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
+        /* Vynútenie čiernej farby pre čísla na smenách */
+        .day-number { color: #000000 !important; font-weight: 900 !important; font-size: 1.1em; }
+        .nočná .day-number { color: #ffffff !important; } /* Na čiernej nočnej necháme biele */
     </style>
 </head>
-<body class="bg-slate-200 notranslate">
+<body class="bg-slate-200 notranslate font-sans">
     <div class="max-w-7xl mx-auto p-2 md:p-4">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-6 rounded-3xl shadow-md border-b-8 border-orange-500 gap-4 no-print text-center">
-            <div>
-                <h1 class="text-4xl font-black text-slate-800 uppercase italic tracking-tighter underline decoration-orange-500">Continental 2026</h1>
-                <p class="text-slate-600 font-black uppercase text-sm mt-2">Výpočet hodín a smien</p>
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-6 rounded-3xl shadow-xl border-b-8 border-orange-500 gap-4 no-print">
+            <div class="text-center md:text-left">
+                <h1 class="text-4xl font-black text-slate-800 uppercase italic tracking-tighter">Continental 2026</h1>
+                <p class="text-green-700 font-black uppercase text-xl flex items-center justify-center md:justify-start gap-2 mt-2">
+                    <span>💶 DNI VÝPLATY OZNAČENÉ ZELENOU</span>
+                </p>
             </div>
             <div id="controls" class="flex gap-2 bg-slate-100 p-2 rounded-2xl border-2 border-slate-200 shadow-inner"></div>
-            <button onclick="window.print()" class="bg-orange-600 text-white px-10 py-4 rounded-2xl font-black hover:bg-black transition-all shadow-xl uppercase italic tracking-widest border-b-4 border-orange-800">TLAČIŤ</button>
+            <button onclick="window.print()" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black shadow-xl uppercase italic">TLAČIŤ PLÁN</button>
         </div>
 
         <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8"></div>
 
         <div class="bg-white p-6 rounded-3xl shadow-lg border-2 border-slate-300 no-print">
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <div class="bg-orange-500 p-4 rounded-2xl text-white font-black text-center shadow-lg uppercase">RANNÁ</div>
-                <div class="bg-blue-500 p-4 rounded-2xl text-white font-black text-center shadow-lg uppercase">POOBEDNÁ</div>
-                <div class="bg-slate-800 p-4 rounded-2xl text-white font-black text-center shadow-lg uppercase text-slate-400">NOČNÁ</div>
-                <div class="border-4 border-orange-500 p-4 rounded-2xl text-slate-800 font-black text-center uppercase italic text-xs flex items-center justify-center">SOBOTA 12h</div>
-                <div class="border-4 border-red-500 shutdown p-4 rounded-2xl text-red-600 font-black text-center uppercase text-xs flex items-center justify-center italic">ODSTÁVKA</div>
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+                <div class="bg-orange-500 p-3 rounded-xl text-black font-black text-center text-xs shadow">RANNÁ</div>
+                <div class="bg-blue-500 p-3 rounded-xl text-black font-black text-center text-xs shadow">POOBEDNÁ</div>
+                <div class="bg-slate-800 p-3 rounded-xl text-white font-black text-center text-xs shadow">NOČNÁ</div>
+                <div class="bg-white border-4 border-orange-500 p-3 rounded-xl text-black font-black text-center text-[10px] italic">SOBOTA 12h</div>
+                <div class="bg-green-600 p-3 rounded-xl text-white font-black text-center text-xs shadow">VÝPLATA 💶</div>
+                <div class="border-4 border-red-500 shutdown p-3 rounded-xl text-red-600 font-black text-center text-[10px] italic shadow">ODSTÁVKA</div>
             </div>
         </div>
     </div>
@@ -41,6 +47,9 @@
         const months = ['Január','Február','Marec','Apríl','Máj','Jún','Júl','August','September','Október','November','December'];
         const holidays = ['2026-01-01','2026-01-06','2026-04-03','2026-04-06','2026-05-01','2026-05-08','2026-07-05','2026-08-29','2026-09-01','2026-09-15','2026-11-01','2026-11-17','2026-12-24','2026-12-25','2026-12-26'];
         const shutdowns = [{s:'2026-07-20', e:'2026-08-02'}, {s:'2026-12-22', e:'2026-12-31'}];
+        
+        // Vaše presné termíny výplat 2026
+        const payDays = {0:9, 1:6, 2:6, 3:9, 4:8, 5:5, 6:7, 7:7, 8:7, 9:7, 10:6, 11:7};
 
         function isShutdown(dateStr) { return shutdowns.some(r => dateStr >= r.s && dateStr <= r.e); }
 
@@ -67,7 +76,7 @@
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
             months.forEach((name, idx) => {
-                let stats = { R: 0, P: 0, N: 0, hours: 0 };
+                let stats = { hours: 0 };
                 const card = document.createElement('div');
                 card.className = "bg-white p-5 rounded-[2.5rem] shadow-xl border-2 border-slate-100 flex flex-col";
                 
@@ -81,32 +90,33 @@
                     const dateStr = date.toISOString().split('T')[0];
                     const shift = getShift(date, currentTeam);
                     const isSun = date.getDay() === 0;
+                    const isSat = date.getDay() === 6;
                     const isHol = holidays.includes(dateStr);
                     const isShut = isShutdown(dateStr);
-                    
-                    if(shift.includes('R')) { stats.R++; stats.hours += shift.includes('12') ? 12 : 8; }
-                    if(shift === 'P') { stats.P++; stats.hours += 8; }
-                    if(shift.includes('N')) { stats.N++; stats.hours += shift.includes('12') ? 12 : 8; }
+                    const isPayDay = (d === payDays[idx]);
 
-                    let color = "bg-slate-50 text-slate-300 font-black";
-                    if(shift.includes('R')) color = "bg-orange-500 text-black font-black shadow-inner border border-orange-600";
-                    if(shift === 'P') color = "bg-blue-500 text-black font-black shadow-inner border border-blue-600";
-                    if(shift.includes('N')) color = "bg-slate-800 text-white font-black shadow-inner border border-black";
+                    if(shift.includes('R')) stats.hours += shift.includes('12') ? 12 : 8;
+                    if(shift === 'P') stats.hours += 8;
+                    if(shift.includes('N')) stats.hours += shift.includes('12') ? 12 : 8;
+
+                    let colorClass = "bg-slate-50 text-slate-400 font-black";
+                    let shiftType = "";
+                    if(shift.includes('R')) { colorClass = "bg-orange-500 shadow-inner"; shiftType="ranná"; }
+                    if(shift === 'P') { colorClass = "bg-blue-500 shadow-inner"; shiftType="poobedná"; }
+                    if(shift.includes('N')) { colorClass = "bg-slate-800 shadow-inner"; shiftType="nočná"; }
                     
-                    h += `<div class="h-11 flex flex-col items-center justify-center rounded-2xl text-[14px] ${color} ${isShut ? 'shutdown' : ''}">
-                            <span class="${isSun?'underline decoration-2':''} ${isHol?'holiday-text text-red-600':''}">${d}</span>
-                            <span class="text-[9px] mt-[-3px] font-black uppercase">${shift}</span>
+                    let extraStyle = (isSat && shift !== '') ? 'ring-4 ring-white ring-inset border-2 border-black scale-105' : '';
+                    let paydayClass = isPayDay ? 'payday' : '';
+
+                    h += `<div class="h-11 flex flex-col items-center justify-center rounded-2xl ${colorClass} ${paydayClass} ${isShut ? 'shutdown' : ''} ${extraStyle} ${shiftType}">
+                            <span class="day-number ${isSun?'underline decoration-2':''} ${isHol?'holiday-text text-red-600':''}">${d}</span>
+                            <span class="text-[9px] mt-[-3px] font-black uppercase text-black ${shiftType==='nočná'?'text-white':''}">${isPayDay && !shift ? '€' : shift}</span>
                           </div>`;
                 }
                 
-                h += `</div><div class="mt-5 pt-4 border-t-2 border-slate-100 flex flex-col gap-2">
-                        <div class="flex justify-around text-[12px] font-black">
-                            <span class="text-orange-600 bg-orange-100 px-2 py-1 rounded-lg">R: ${stats.R}</span>
-                            <span class="text-blue-600 bg-blue-100 px-2 py-1 rounded-lg">P: ${stats.P}</span>
-                            <span class="text-slate-800 bg-slate-200 px-2 py-1 rounded-lg">N: ${stats.N}</span>
-                        </div>
+                h += `</div><div class="mt-5 pt-4 border-t-2 border-slate-100">
                         <div class="bg-slate-900 text-orange-500 py-3 rounded-2xl font-black text-center text-xl shadow-lg border-b-4 border-orange-600 uppercase italic">
-                            SPOLU: ${stats.hours} H
+                            ${stats.hours} HODÍN
                         </div>
                       </div>`;
                 
@@ -119,13 +129,13 @@
         ['A','B','C','D'].forEach(t => {
             const btn = document.createElement('button');
             btn.innerText = t;
-            btn.className = `w-14 h-14 rounded-2xl font-black text-2xl transition-all shadow-md ` + (t===currentTeam ? 'bg-orange-600 text-white scale-110 rotate-3' : 'bg-white text-slate-400 border-2 border-slate-200');
+            btn.className = `w-14 h-14 rounded-2xl font-black text-2xl transition-all shadow-md ` + (t===currentTeam ? 'bg-orange-600 text-white scale-110 shadow-orange-300' : 'bg-white text-slate-400 border-2 border-slate-200');
             btn.onclick = () => { currentTeam = t; render(); updateButtons(); };
             ctrl.appendChild(btn);
         });
         function updateButtons() {
             document.querySelectorAll('#controls button').forEach(b => {
-                b.className = `w-14 h-14 rounded-2xl font-black text-2xl transition-all shadow-md ` + (b.innerText===currentTeam ? 'bg-orange-600 text-white scale-110 rotate-3' : 'text-slate-400 bg-white border-2 border-slate-200');
+                b.className = `w-14 h-14 rounded-2xl font-black text-2xl transition-all shadow-md ` + (b.innerText===currentTeam ? 'bg-orange-600 text-white scale-110 shadow-orange-300' : 'text-slate-400 bg-white border-2 border-slate-200');
             });
         }
         render();
