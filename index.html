@@ -7,51 +7,36 @@
     <title>Continental 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* TOTÁLNE VYNÚTENIE ČIERNEJ FARBY PRE ČÍSLA */
-        .day-num { 
-            color: #000000 !important; 
-            font-weight: 900 !important; 
-            font-size: 1.3rem !important;
-            display: block !important;
-        }
-        /* ŠPECIÁLNE PRE ŽLTÚ 12-tku */
-        .smena-12h { background-color: #fde047 !important; border: 3px solid #ca8a04 !important; }
-        .smena-12h .day-num, .smena-12h .shift-text { color: #000000 !important; }
-
-        /* OSTATNÉ FARBY */
-        .ranná { background-color: #f97316 !important; }
-        .poobedná { background-color: #3b82f6 !important; }
-        .nočná { background-color: #1e293b !important; }
-        
-        /* LEN NA NOČNEJ MUSÍ BYŤ BIELE, ABY TO BOLO VIDIEŤ */
-        .nočná .day-num, .nočná .shift-text { color: #ffffff !important; }
-
-        .holiday-date { background-color: #ef4444 !important; border: 2px solid #991b1b !important; }
-        .holiday-date .day-num { color: #ffffff !important; }
-
-        .payday { background-color: #22c55e !important; border: 3px solid #166534 !important; }
-        .payday .day-num { color: #ffffff !important; }
-
         .shutdown { background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.2) 5px, rgba(239, 68, 68, 0.2) 10px); border: 2px solid #ef4444 !important; }
-        .shift-text { font-size: 10px !important; font-weight: 900 !important; color: #000000 !important; }
+        .holiday-date { background-color: #ef4444 !important; color: white !important; font-weight: 900 !important; border: 2px solid #991b1b !important; }
+        .payday { background-color: #16a34a !important; color: white !important; font-weight: 900 !important; border: 3px solid #14532d !important; }
+        
+        /* 12H SMENA - TERAZ HNEDÁ */
+        .smena-12h { background-color: #78350f !important; color: #ffffff !important; border: 2px solid #451a03 !important; transform: scale(1.05); shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .smena-12h .day-num { color: #ffffff !important; }
+        .smena-12h .shift-text { color: #fbbf24 !important; } /* Zlatistý text pre "R12/N12" na hnedom pozadí */
+
+        .day-num { color: #000000 !important; font-weight: 950 !important; font-size: 1.2em; }
+        .nočná .day-num { color: #ffffff !important; }
+        .shift-text { font-weight: 900 !important; font-size: 9px; text-transform: uppercase; }
     </style>
 </head>
 <body class="bg-slate-200 notranslate font-sans">
     <div class="max-w-7xl mx-auto p-2">
         <div class="mb-6 bg-white p-6 rounded-3xl shadow-xl border-b-8 border-orange-500 text-center">
-            <h1 class="text-4xl font-black uppercase italic tracking-tighter">CONTINENTAL 2026</h1>
+            <h1 class="text-4xl font-black uppercase italic tracking-tighter text-slate-800">CONTINENTAL 2026</h1>
             <div id="controls" class="flex justify-center gap-2 mt-4"></div>
         </div>
 
         <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8"></div>
 
-        <div class="bg-white p-6 rounded-3xl shadow-lg border-2 border-slate-300 no-print grid grid-cols-2 md:grid-cols-3 gap-3 text-center text-[10px] font-black uppercase">
-            <div class="bg-orange-500 p-3 rounded-xl">Ranná</div>
-            <div class="bg-blue-500 p-3 rounded-xl">Poobedná</div>
+        <div class="bg-white p-6 rounded-3xl shadow-lg border-2 border-slate-300 no-print grid grid-cols-2 md:grid-cols-6 gap-3 text-center text-[10px] font-black uppercase">
+            <div class="bg-orange-500 p-3 rounded-xl text-black">Ranná</div>
+            <div class="bg-blue-500 p-3 rounded-xl text-black">Poobedná</div>
             <div class="bg-slate-800 p-3 rounded-xl text-white">Nočná</div>
-            <div class="bg-yellow-400 border-2 border-yellow-600 p-3 rounded-xl text-black">Sobota 12h</div>
-            <div class="bg-green-600 p-3 rounded-xl text-white italic tracking-widest text-xs">VÝPLATA 💶</div>
-            <div class="bg-red-600 p-3 rounded-xl text-white italic tracking-widest text-xs">SVIATOK 🚩</div>
+            <div class="bg-[#78350f] p-3 rounded-xl text-white border-2 border-[#451a03]">12h Smena 🟤</div>
+            <div class="bg-green-600 p-3 rounded-xl text-white">Výplata 💶</div>
+            <div class="bg-red-600 p-3 rounded-xl text-white">Sviatok 🚩</div>
         </div>
     </div>
 
@@ -102,10 +87,10 @@
                     if(shift.includes('N')) hours += shift.includes('12') ? 12 : 8;
 
                     let c = "bg-slate-50";
-                    if(shift.includes('R')) c = "ranná";
-                    if(shift === 'P') c = "poobedná";
-                    if(shift.includes('N')) c = "nočná";
-                    if(shift.includes('12')) c += " smena-12h";
+                    if(shift.includes('R')) c = "bg-orange-500 shadow-inner";
+                    if(shift === 'P') c = "bg-blue-500 shadow-inner";
+                    if(shift.includes('N')) c = "bg-slate-800 shadow-inner nočná";
+                    if(shift.includes('12')) c = "smena-12h";
                     if(isPayDay) c = "payday";
                     if(isHol) c = "holiday-date";
 
@@ -119,13 +104,19 @@
             });
         }
 
-        ['A','B','C','D'].forEach(t => {
+        ['A', 'B', 'C', 'D'].forEach(t => {
             const btn = document.createElement('button');
             btn.innerText = t;
-            btn.className = `w-14 h-14 rounded-2xl font-black text-2xl border-2 ` + (t===currentTeam ? 'bg-orange-600 text-white border-orange-700 scale-110 shadow-lg' : 'bg-white text-slate-400 border-slate-200');
-            btn.onclick = () => { currentTeam = t; render(); };
+            btn.className = `w-14 h-14 rounded-2xl font-black text-2xl border-2 ` + (t === currentTeam ? 'bg-orange-600 text-white border-orange-700 scale-110 shadow-lg' : 'bg-white text-slate-400 border-slate-200');
+            btn.onclick = () => { currentTeam = t; render(); updateButtons(); };
             document.getElementById('controls').appendChild(btn);
         });
+
+        function updateButtons() {
+            document.querySelectorAll('#controls button').forEach(b => {
+                b.className = `w-14 h-14 rounded-2xl font-black text-2xl border-2 ` + (b.innerText === currentTeam ? 'bg-orange-600 text-white border-orange-700 scale-110 shadow-lg' : 'bg-white text-slate-400 border-slate-200');
+            });
+        }
         render();
     </script>
 </body>
