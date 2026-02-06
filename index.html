@@ -8,30 +8,30 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .shutdown { background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.2) 5px, rgba(239, 68, 68, 0.2) 10px); border: 2px solid #ef4444 !important; }
-        .holiday-text { color: #ef4444 !important; font-weight: 900 !important; }
+        .holiday-text { color: #ef4444 !important; font-weight: 900 !important; border: 1px solid #ef4444; border-radius: 5px; padding: 1px; }
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body class="bg-slate-200 notranslate">
     <div class="max-w-7xl mx-auto p-2 md:p-4">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-6 rounded-3xl shadow-md border-b-4 border-orange-500 gap-4 no-print">
-            <div class="text-center md:text-left">
-                <h1 class="text-4xl font-black text-slate-800 uppercase italic tracking-tighter">Continental 2026</h1>
-                <p class="text-orange-600 font-black uppercase text-sm tracking-widest leading-none">Fond pracovného času</p>
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-6 rounded-3xl shadow-md border-b-8 border-orange-500 gap-4 no-print text-center">
+            <div>
+                <h1 class="text-4xl font-black text-slate-800 uppercase italic tracking-tighter underline decoration-orange-500">Continental 2026</h1>
+                <p class="text-slate-600 font-black uppercase text-sm mt-2">Výpočet hodín a smien</p>
             </div>
-            <div id="controls" class="flex gap-2 bg-slate-100 p-2 rounded-2xl border border-slate-200"></div>
-            <button onclick="window.print()" class="bg-slate-800 text-white px-10 py-4 rounded-2xl font-black hover:bg-black transition-all shadow-xl uppercase italic tracking-widest">Tlačiť</button>
+            <div id="controls" class="flex gap-2 bg-slate-100 p-2 rounded-2xl border-2 border-slate-200 shadow-inner"></div>
+            <button onclick="window.print()" class="bg-orange-600 text-white px-10 py-4 rounded-2xl font-black hover:bg-black transition-all shadow-xl uppercase italic tracking-widest border-b-4 border-orange-800">TLAČIŤ</button>
         </div>
 
         <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8"></div>
 
-        <div class="bg-white p-6 rounded-3xl shadow-lg border border-slate-200 no-print">
+        <div class="bg-white p-6 rounded-3xl shadow-lg border-2 border-slate-300 no-print">
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <div class="bg-orange-500 p-4 rounded-2xl text-white font-black text-center shadow-lg uppercase tracking-widest">RANNÁ</div>
-                <div class="bg-blue-500 p-4 rounded-2xl text-white font-black text-center shadow-lg uppercase tracking-widest">POOBEDNÁ</div>
-                <div class="bg-slate-800 p-4 rounded-2xl text-white font-black text-center shadow-lg uppercase tracking-widest">NOČNÁ</div>
-                <div class="border-4 border-orange-500 p-4 rounded-2xl text-slate-800 font-black text-center shadow-lg uppercase italic text-xs flex items-center justify-center">SOBOTA 12h</div>
-                <div class="border-4 border-red-500 shutdown p-4 rounded-2xl text-red-600 font-black text-center shadow-lg uppercase text-xs flex items-center justify-center italic">ODSTÁVKA</div>
+                <div class="bg-orange-500 p-4 rounded-2xl text-white font-black text-center shadow-lg uppercase">RANNÁ</div>
+                <div class="bg-blue-500 p-4 rounded-2xl text-white font-black text-center shadow-lg uppercase">POOBEDNÁ</div>
+                <div class="bg-slate-800 p-4 rounded-2xl text-white font-black text-center shadow-lg uppercase text-slate-400">NOČNÁ</div>
+                <div class="border-4 border-orange-500 p-4 rounded-2xl text-slate-800 font-black text-center uppercase italic text-xs flex items-center justify-center">SOBOTA 12h</div>
+                <div class="border-4 border-red-500 shutdown p-4 rounded-2xl text-red-600 font-black text-center uppercase text-xs flex items-center justify-center italic">ODSTÁVKA</div>
             </div>
         </div>
     </div>
@@ -69,9 +69,9 @@
             months.forEach((name, idx) => {
                 let stats = { R: 0, P: 0, N: 0, hours: 0 };
                 const card = document.createElement('div');
-                card.className = "bg-white p-5 rounded-[2.5rem] shadow-xl border border-slate-200 flex flex-col transition-all hover:scale-[1.02]";
+                card.className = "bg-white p-5 rounded-[2.5rem] shadow-xl border-2 border-slate-100 flex flex-col";
                 
-                let h = `<h2 class="font-black text-center mb-4 text-slate-800 border-b-2 border-orange-100 pb-2 uppercase text-lg italic tracking-tighter text-orange-600">${name}</h2><div class="grid grid-cols-7 gap-1 text-[11px] font-black text-slate-400 text-center mb-3 tracking-widest uppercase"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div></div><div class="grid grid-cols-7 gap-1">`;
+                let h = `<h2 class="font-black text-center mb-4 text-slate-800 border-b-4 border-orange-500 pb-2 uppercase text-lg italic tracking-tighter">${name}</h2><div class="grid grid-cols-7 gap-1 text-[11px] font-black text-slate-500 text-center mb-3 tracking-widest uppercase italic"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div></div><div class="grid grid-cols-7 gap-1">`;
                 
                 const first = new Date(2026, idx, 1);
                 for(let i=1; i<(first.getDay()||7); i++) h += '<div></div>';
@@ -89,21 +89,24 @@
                     if(shift.includes('N')) { stats.N++; stats.hours += shift.includes('12') ? 12 : 8; }
 
                     let color = "bg-slate-50 text-slate-300 font-black";
-                    if(shift.includes('R')) color = "bg-orange-500 text-white font-black shadow-inner border-b-2 border-orange-700";
-                    if(shift === 'P') color = "bg-blue-500 text-white font-black shadow-inner border-b-2 border-blue-700";
-                    if(shift.includes('N')) color = "bg-slate-800 text-white font-black shadow-inner border-b-2 border-black";
+                    if(shift.includes('R')) color = "bg-orange-500 text-black font-black shadow-inner border border-orange-600";
+                    if(shift === 'P') color = "bg-blue-500 text-black font-black shadow-inner border border-blue-600";
+                    if(shift.includes('N')) color = "bg-slate-800 text-white font-black shadow-inner border border-black";
                     
-                    h += `<div class="h-11 flex flex-col items-center justify-center rounded-2xl text-[13px] ${color} ${isShut ? 'shutdown' : ''}"><span class="${isSun?'underline decoration-2':''} ${isHol?'holiday-text':''}">${d}</span><span class="text-[9px] mt-[-3px] font-black">${shift}</span></div>`;
+                    h += `<div class="h-11 flex flex-col items-center justify-center rounded-2xl text-[14px] ${color} ${isShut ? 'shutdown' : ''}">
+                            <span class="${isSun?'underline decoration-2':''} ${isHol?'holiday-text text-red-600':''}">${d}</span>
+                            <span class="text-[9px] mt-[-3px] font-black uppercase">${shift}</span>
+                          </div>`;
                 }
                 
                 h += `</div><div class="mt-5 pt-4 border-t-2 border-slate-100 flex flex-col gap-2">
-                        <div class="flex justify-around text-sm font-black italic">
-                            <span class="text-orange-600 bg-orange-50 px-3 py-1 rounded-xl border border-orange-100 uppercase">R: ${stats.R}</span>
-                            <span class="text-blue-600 bg-blue-50 px-3 py-1 rounded-xl border border-blue-100 uppercase">P: ${stats.P}</span>
-                            <span class="text-slate-800 bg-slate-50 px-3 py-1 rounded-xl border border-slate-100 uppercase">N: ${stats.N}</span>
+                        <div class="flex justify-around text-[12px] font-black">
+                            <span class="text-orange-600 bg-orange-100 px-2 py-1 rounded-lg">R: ${stats.R}</span>
+                            <span class="text-blue-600 bg-blue-100 px-2 py-1 rounded-lg">P: ${stats.P}</span>
+                            <span class="text-slate-800 bg-slate-200 px-2 py-1 rounded-lg">N: ${stats.N}</span>
                         </div>
-                        <div class="bg-orange-600 text-white py-3 rounded-2xl font-black text-center text-xl shadow-lg border-b-4 border-orange-800 uppercase tracking-tighter">
-                            SPOLU: ${stats.hours} HODÍN
+                        <div class="bg-slate-900 text-orange-500 py-3 rounded-2xl font-black text-center text-xl shadow-lg border-b-4 border-orange-600 uppercase italic">
+                            SPOLU: ${stats.hours} H
                         </div>
                       </div>`;
                 
@@ -116,13 +119,13 @@
         ['A','B','C','D'].forEach(t => {
             const btn = document.createElement('button');
             btn.innerText = t;
-            btn.className = `w-14 h-14 rounded-2xl font-black text-xl transition-all shadow-sm ` + (t===currentTeam ? 'bg-orange-500 text-white shadow-orange-200 scale-110' : 'bg-white text-slate-400 border border-slate-200');
+            btn.className = `w-14 h-14 rounded-2xl font-black text-2xl transition-all shadow-md ` + (t===currentTeam ? 'bg-orange-600 text-white scale-110 rotate-3' : 'bg-white text-slate-400 border-2 border-slate-200');
             btn.onclick = () => { currentTeam = t; render(); updateButtons(); };
             ctrl.appendChild(btn);
         });
         function updateButtons() {
             document.querySelectorAll('#controls button').forEach(b => {
-                b.className = `w-14 h-14 rounded-2xl font-black text-xl transition-all shadow-sm ` + (b.innerText===currentTeam ? 'bg-orange-500 text-white shadow-orange-200 scale-110' : 'text-slate-400 bg-white border border-slate-200');
+                b.className = `w-14 h-14 rounded-2xl font-black text-2xl transition-all shadow-md ` + (b.innerText===currentTeam ? 'bg-orange-600 text-white scale-110 rotate-3' : 'text-slate-400 bg-white border-2 border-slate-200');
             });
         }
         render();
