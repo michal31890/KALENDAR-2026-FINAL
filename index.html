@@ -9,16 +9,19 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
         
-        /* SKRATKY DNI - PO, UT... */
-        .dni-skratky { color: #000000 !important; font-weight: 900 !important; font-size: 10px !important; text-transform: uppercase; }
+        /* ČIERNE SKRATKY DNÍ */
+        .dni-skratky { color: #000000 !important; font-weight: 900 !important; font-size: 11px !important; text-transform: uppercase; }
 
-        /* HODINY VÝRAZNÉ */
-        .suma-hodin-box { background-color: #000000 !important; color: #ffffff !important; border-bottom: 4px solid #f97316 !important; font-weight: 900 !important; padding: 6px 0; border-radius: 12px; margin-top: 10px; font-size: 1.1rem !important; }
+        /* VÝRAZNÉ HODINY */
+        .suma-hodin-box { background-color: #000000 !important; color: #ffffff !important; border-bottom: 4px solid #facc15 !important; font-weight: 900 !important; padding: 6px 0; border-radius: 14px; margin-top: 12px; font-size: 1.1rem !important; }
 
-        /* RANNÁ - VYNÚTENÁ ŽLTÁ */
+        /* FARBY SMEN */
         .zltatest-ranna { background-color: #facc15 !important; border: 1px solid #ca8a04 !important; }
         .modra-poobedna { background-color: #3b82f6 !important; }
         .cierna-nocna { background-color: #0f172a !important; color: white !important; }
+
+        /* SVIATKY - ČERVENÉ */
+        .sviatok-cerveny { background-color: #ef4444 !important; color: white !important; border: 1px solid #b91c1c !important; }
 
         /* ODSTÁVKA - ČERVENÝ RÁM */
         .odstavka-fix-red { 
@@ -27,25 +30,25 @@
         }
         
         .day-num { color: #000000 !important; font-weight: 950 !important; font-size: 1.15rem; }
-        .cierna-nocna .day-num { color: #ffffff !important; }
+        .cierna-nocna .day-num, .sviatok-cerveny .day-num { color: #ffffff !important; }
         .vyplata-zelena { background-color: #22c55e !important; border: 2px solid #166534 !important; color: white !important; }
     </style>
 </head>
-<body class="bg-slate-100 p-2 text-slate-900">
-    <div class="max-w-[1600px] mx-auto text-center">
+<body class="bg-slate-100 p-2 text-slate-900 text-center">
+    <div class="max-w-[1600px] mx-auto">
         <header class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5 mb-6">
-            <h1 class="font-black text-3xl uppercase italic text-orange-600 tracking-tighter">Continental 2026</h1>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Smena C | Žltá ranná • Čierne skratky</p>
+            <h1 class="font-black text-3xl uppercase italic text-orange-600 tracking-tighter leading-none">Continental 2026</h1>
+            <p class="text-[10px] font-bold text-slate-500 uppercase mt-2">Ranná: Žltá | Sviatky: Červené | Čierne dni</p>
             <div id="teamButtons" class="flex justify-center gap-2 mt-4"></div>
         </header>
 
         <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"></div>
 
-        <footer class="bg-white rounded-3xl border border-slate-200 p-6 grid grid-cols-2 md:grid-cols-5 gap-4 no-print text-center">
+        <footer class="bg-white rounded-3xl border border-slate-200 p-6 grid grid-cols-2 md:grid-cols-5 gap-4 no-print">
             <div class="zltatest-ranna p-3 rounded-xl font-black text-xs uppercase shadow-sm">Ranná</div>
             <div class="modra-poobedna p-3 rounded-xl font-black text-xs uppercase shadow-sm">Poobedná</div>
             <div class="cierna-nocna p-3 rounded-xl font-black text-xs uppercase shadow-sm">Nočná</div>
-            <div class="vyplata-zelena p-3 rounded-xl font-black text-xs uppercase shadow-sm">Výplata 💶</div>
+            <div class="sviatok-cerveny p-3 rounded-xl font-black text-xs uppercase shadow-sm">Sviatok 🚩</div>
             <div class="odstavka-fix-red p-3 rounded-xl font-black text-xs text-red-600 uppercase">Odstávka</div>
         </footer>
     </div>
@@ -55,7 +58,9 @@
         const months = ['Január','Február','Marec','Apríl','Máj','Jún','Júl','August','September','Október','November','December'];
         const payDays = {0:9, 1:6, 2:6, 3:9, 4:8, 5:5, 6:7, 7:7, 8:7, 9:7, 10:6, 11:7};
         
-        // 28-dňový cyklus: 4R, 3N, 4V, 3R, 4N, 3V, 5P, 2V
+        // Zadané sviatky: 1.5., 5.6., 29.8., 1.11.
+        const specialHolidays = ['2026-05-01', '2026-06-05', '2026-08-29', '2026-11-01'];
+
         const pattern = ['R','R','R','R', 'N','N','N', 'V','V','V','V', 'R','R','R', 'N','N','N','N', 'V','V','V', 'P','P','P','P','P', 'V','V'];
 
         function getShift(date, team) {
@@ -69,7 +74,7 @@
         function isShutdown(d, m) {
             if (m === 0 && d >= 1 && d <= 6) return true; // Január
             if (m === 3 && d >= 3 && d <= 6) return true; // Veľká noc
-            if (m === 6 && d >= 20 && d <= 26) return true; // Júl (Leto)
+            if (m === 6 && d >= 20 && d <= 26) return true; // Leto
             if (m === 11 && d >= 22) return true; // December
             return false;
         }
@@ -80,24 +85,29 @@
             months.forEach((name, mIdx) => {
                 let hours = 0;
                 const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-200 flex flex-col";
+                card.className = "bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-200";
                 let h = `<div class="mb-4 px-2"><h2 class="font-black text-slate-800 uppercase italic text-sm tracking-tighter">${name}</h2></div><div class="grid grid-cols-7 gap-1 dni-skratky text-center mb-2"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div></div><div class="grid grid-cols-7 gap-1">`;
                 const first = new Date(2026, mIdx, 1);
                 for(let i=1; i<(first.getDay()||7); i++) h += '<div></div>';
                 for(let d=1; d<=new Date(2026, mIdx+1, 0).getDate(); d++) {
                     const date = new Date(2026, mIdx, d);
+                    const dateStr = date.toISOString().split('T')[0];
                     const shift = getShift(date, currentTeam);
                     const isPay = (d === payDays[mIdx]);
                     const isShut = isShutdown(d, mIdx);
+                    const isHol = specialHolidays.includes(dateStr);
+
                     if(shift) hours += 8;
                     let c = "bg-slate-50";
                     if(shift==='R') c = "zltatest-ranna";
                     if(shift==='P') c = "modra-poobedna";
                     if(shift==='N') c = "cierna-nocna";
-                    if(isPay) c = "vyplata-zelena";
-                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-xl relative ${c} ${isShut && !isPay ? 'odstavka-fix-red' : ''}">
+                    if(isHol) c = "sviatok-cerveny"; // SVIATKY MAJÚ PREDNOSŤ
+                    if(isPay && !isHol) c = "vyplata-zelena";
+                    
+                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-xl relative ${c} ${isShut && !isPay && !isHol ? 'odstavka-fix-red' : ''}">
                             <span class="day-num">${d}</span>
-                            <span class="text-[8px] font-black uppercase ${shift==='N'||isPay?'text-white':'text-black'}">${isPay && !shift ? '€' : shift}</span>
+                            <span class="text-[8px] font-black uppercase ${shift==='N'||isHol||isPay?'text-white':'text-black'}">${isPay && !shift && !isHol ? '€' : (isHol ? '🚩' : shift)}</span>
                           </div>`;
                 }
                 h += `</div><div class="suma-hodin-box uppercase italic tracking-widest">${hours} HODÍN</div>`; 
