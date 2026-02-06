@@ -3,44 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - ZLTA</title>
+    <title>Continental 2026 - FINAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
         
-        /* TOTÁLNE VYNÚTENIE ŽLTEJ PRE RANNÚ */
-        .ranna-zltatest { background-color: #facc15 !important; border: 1px solid #ca8a04 !important; }
-        .poobedna-modra { background-color: #3b82f6 !important; }
-        .nocna-cierna { background-color: #0f172a !important; color: white !important; }
+        /* SKRATKY DNI - PO, UT... */
+        .dni-skratky { color: #000000 !important; font-weight: 900 !important; font-size: 10px !important; text-transform: uppercase; }
 
-        /* ODSTÁVKA - HRUBÝ ČERVENÝ RÁM */
-        .odstavka-fix { 
+        /* HODINY VÝRAZNÉ */
+        .suma-hodin-box { background-color: #000000 !important; color: #ffffff !important; border-bottom: 4px solid #f97316 !important; font-weight: 900 !important; padding: 6px 0; border-radius: 12px; margin-top: 10px; font-size: 1.1rem !important; }
+
+        /* RANNÁ - VYNÚTENÁ ŽLTÁ */
+        .zltatest-ranna { background-color: #facc15 !important; border: 1px solid #ca8a04 !important; }
+        .modra-poobedna { background-color: #3b82f6 !important; }
+        .cierna-nocna { background-color: #0f172a !important; color: white !important; }
+
+        /* ODSTÁVKA - ČERVENÝ RÁM */
+        .odstavka-fix-red { 
             background-image: repeating-linear-gradient(45deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.1) 5px, rgba(239, 68, 68, 0.2) 5px, rgba(239, 68, 68, 0.2) 10px) !important;
             border: 3.5px solid #ef4444 !important;
         }
         
         .day-num { color: #000000 !important; font-weight: 950 !important; font-size: 1.15rem; }
-        .nocna-cierna .day-num { color: #ffffff !important; }
-        .payday-fix { background-color: #22c55e !important; border: 2px solid #166534 !important; }
+        .cierna-nocna .day-num { color: #ffffff !important; }
+        .vyplata-zelena { background-color: #22c55e !important; border: 2px solid #166534 !important; color: white !important; }
     </style>
 </head>
 <body class="bg-slate-100 p-2 text-slate-900">
-    <div class="max-w-[1600px] mx-auto">
-        <header class="bg-white rounded-3xl shadow-sm border border-slate-200 p-4 mb-6 text-center">
-            <h1 class="font-black text-2xl uppercase italic text-orange-600">Continental 2026</h1>
-            <p class="text-[10px] font-bold text-slate-500 uppercase">Ranná = ŽLTÁ | Odstávka = ČERVENÝ RÁM</p>
+    <div class="max-w-[1600px] mx-auto text-center">
+        <header class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5 mb-6">
+            <h1 class="font-black text-3xl uppercase italic text-orange-600 tracking-tighter">Continental 2026</h1>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Smena C | Žltá ranná • Čierne skratky</p>
             <div id="teamButtons" class="flex justify-center gap-2 mt-4"></div>
         </header>
 
         <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"></div>
 
-        <footer class="bg-white rounded-3xl border border-slate-200 p-6 grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div class="ranna-zltatest p-3 rounded-xl text-center font-black text-xs text-black uppercase">Ranná</div>
-            <div class="poobedna-modra p-3 rounded-xl text-center font-black text-xs text-black uppercase">Poobedná</div>
-            <div class="nocna-cierna p-3 rounded-xl text-center font-black text-xs text-white uppercase">Nočná</div>
-            <div class="payday-fix p-3 rounded-xl text-center font-black text-xs text-white uppercase italic">Výplata</div>
-            <div class="odstavka-fix p-3 rounded-xl text-center font-black text-xs text-red-600 uppercase">Odstávka</div>
+        <footer class="bg-white rounded-3xl border border-slate-200 p-6 grid grid-cols-2 md:grid-cols-5 gap-4 no-print text-center">
+            <div class="zltatest-ranna p-3 rounded-xl font-black text-xs uppercase shadow-sm">Ranná</div>
+            <div class="modra-poobedna p-3 rounded-xl font-black text-xs uppercase shadow-sm">Poobedná</div>
+            <div class="cierna-nocna p-3 rounded-xl font-black text-xs uppercase shadow-sm">Nočná</div>
+            <div class="vyplata-zelena p-3 rounded-xl font-black text-xs uppercase shadow-sm">Výplata 💶</div>
+            <div class="odstavka-fix-red p-3 rounded-xl font-black text-xs text-red-600 uppercase">Odstávka</div>
         </footer>
     </div>
 
@@ -48,6 +54,8 @@
         let currentTeam = 'C';
         const months = ['Január','Február','Marec','Apríl','Máj','Jún','Júl','August','September','Október','November','December'];
         const payDays = {0:9, 1:6, 2:6, 3:9, 4:8, 5:5, 6:7, 7:7, 8:7, 9:7, 10:6, 11:7};
+        
+        // 28-dňový cyklus: 4R, 3N, 4V, 3R, 4N, 3V, 5P, 2V
         const pattern = ['R','R','R','R', 'N','N','N', 'V','V','V','V', 'R','R','R', 'N','N','N','N', 'V','V','V', 'P','P','P','P','P', 'V','V'];
 
         function getShift(date, team) {
@@ -59,10 +67,10 @@
         }
 
         function isShutdown(d, m) {
-            if (m === 0 && d >= 1 && d <= 6) return true;
+            if (m === 0 && d >= 1 && d <= 6) return true; // Január
             if (m === 3 && d >= 3 && d <= 6) return true; // Veľká noc
-            if (m === 6 && d >= 20 && d <= 26) return true; // Leto
-            if (m === 11 && d >= 22) return true;
+            if (m === 6 && d >= 20 && d <= 26) return true; // Júl (Leto)
+            if (m === 11 && d >= 22) return true; // December
             return false;
         }
 
@@ -72,8 +80,8 @@
             months.forEach((name, mIdx) => {
                 let hours = 0;
                 const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-200";
-                let h = `<div class="flex justify-between items-center mb-4"><h2 class="font-black text-slate-800 uppercase italic text-sm px-2">${name}</h2><div class="bg-slate-100 px-3 py-1 rounded-full text-[9px] font-black h-sum"></div></div><div class="grid grid-cols-7 gap-1 text-[9px] font-black text-slate-300 text-center mb-2 uppercase"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div></div><div class="grid grid-cols-7 gap-1">`;
+                card.className = "bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-200 flex flex-col";
+                let h = `<div class="mb-4 px-2"><h2 class="font-black text-slate-800 uppercase italic text-sm tracking-tighter">${name}</h2></div><div class="grid grid-cols-7 gap-1 dni-skratky text-center mb-2"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div></div><div class="grid grid-cols-7 gap-1">`;
                 const first = new Date(2026, mIdx, 1);
                 for(let i=1; i<(first.getDay()||7); i++) h += '<div></div>';
                 for(let d=1; d<=new Date(2026, mIdx+1, 0).getDate(); d++) {
@@ -83,16 +91,17 @@
                     const isShut = isShutdown(d, mIdx);
                     if(shift) hours += 8;
                     let c = "bg-slate-50";
-                    if(shift==='R') c = "ranna-zltatest";
-                    if(shift==='P') c = "poobedna-modra";
-                    if(shift==='N') c = "nocna-cierna";
-                    if(isPay) c = "payday-fix";
-                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-xl relative ${c} ${isShut && !isPay ? 'odstavka-fix' : ''}">
+                    if(shift==='R') c = "zltatest-ranna";
+                    if(shift==='P') c = "modra-poobedna";
+                    if(shift==='N') c = "cierna-nocna";
+                    if(isPay) c = "vyplata-zelena";
+                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-xl relative ${c} ${isShut && !isPay ? 'odstavka-fix-red' : ''}">
                             <span class="day-num">${d}</span>
                             <span class="text-[8px] font-black uppercase ${shift==='N'||isPay?'text-white':'text-black'}">${isPay && !shift ? '€' : shift}</span>
                           </div>`;
                 }
-                h += `</div>`; card.innerHTML = h; card.querySelector('.h-sum').innerText = hours + ' Hod'; grid.appendChild(card);
+                h += `</div><div class="suma-hodin-box uppercase italic tracking-widest">${hours} HODÍN</div>`; 
+                card.innerHTML = h; grid.appendChild(card);
             });
         }
 
