@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Continental 2026 - Ročný Plán</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        .shutdown-pattern {
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.1) 5px, rgba(239, 68, 68, 0.1) 10px);
+        }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        @media print {
+            .print-hidden, #geminiSection { display: none !important; }
+            body { background: white !important; }
+            #poster { border: none !important; box-shadow: none !important; }
+            #calendarGrid { grid-template-columns: repeat(4, 1fr) !important; gap: 4px !important; }
+        }
+
+        .gemini-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 transition-colors duration-500" id="bodyTag">
+
+    <div class="max-w-7xl mx-auto min-h-screen flex flex-col p-2 md:p-6" id="appContainer">
+        
+        <!-- OVLÁDACÍ PANEL -->
+        <div id="controls" class="p-4 bg-white shadow-md rounded-3xl mb-4 border border-slate-200 print-hidden">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <h1 class="font-black text-xl italic uppercase tracking-tighter text-slate-900">Continental <span class="text-orange-500">2026</span></h1>
+                    <div class="h-6 w-px bg-slate-200 hidden md:block"></div>
+                    <div class="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black uppercase border border-emerald-100">
+                        Zmena <span id="activeTeamLabel">C</span>
+                    </div>
+                </div>
+                
+                <div class="flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto" id="teamButtons">
+                    <!-- Generované cez JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- HLAVNÝ OBSAH -->
+        <div id="poster" class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-200 transition-all">
+            <div class="p-8 border-b-4 border-[#ffa500] relative overflow-hidden bg-slate-50">
+                <div class="absolute -right-4 -top-8 text-9xl font-black text-slate-200/50 italic select-none pointer-events-none">2026</div>
+                <div class="relative z-10">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1 italic">Manufacturing Planner</p>
+                    <h2 class="text-4xl font-black text-slate-900 uppercase italic tracking-tighter">ZMENA <span id="posterTeamLabel" class="text-orange-500">C</span></h2>
+                </div>
+            </div>
+
+            <!-- MRIEŽKA MESIACOV -->
+            <div id="calendarGrid" class="p-4 md:p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+
+            <!-- AI GEMINI SECTION -->
+            <div id="geminiSection" class="p-6 bg-slate-50 border-t border-slate-100 print-hidden">
+                <div class="gemini-gradient rounded-3xl p-6 relative shadow-xl overflow-hidden">
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="p-2 bg-sky-500 rounded-xl shadow-lg shadow-sky-500/20">
+                                <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-black uppercase text-xs tracking-widest">AI Asistent Gemini</h3>
+                                <p class="text-sky-300 text-[10px] font-bold uppercase tracking-tight">Plánovanie s umelou inteligenciou</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+                            <button onclick="askGemini('analyze')" class="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-left group">
+                                <span class="text-white text-[10px] font-black uppercase tracking-widest">Analýza rozpisov ✨</span>
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-sky-400"></i>
+                            </button>
+                            <button onclick="askGemini('vacation')" class="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-left group">
+                                <span class="text-white text-[10px] font-black uppercase tracking-widest">Plánovač dovolenky ✨</span>
+                                <i data-lucide="calendar-heart" class="w-4 h-4 text-sky-400"></i>
+                            </button>
+                            <button onclick="askGemini('motivation')" class="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-left group">
+                                <span class="text-white text-[10px] font-black uppercase tracking-widest">Motivácia pre zmenu ✨</span>
+                                <i data-lucide="zap" class="w-4 h-4 text-sky-400"></i>
+                            </button>
+                        </div>
+
+                        <div id="geminiResponse" class="hidden min-h-[60px] p-5 bg-black/20 rounded-2xl border border-white/5 text-slate-300 text-xs leading-relaxed italic"></div>
+                        <div id="geminiLoading" class="hidden p-5 flex flex-col items-center justify-center gap-3">
+                            <div class="flex gap-1.5">
+                                <div class="w-2 h-2 bg-sky-500 rounded-full animate-bounce"></div>
+                                <div class="w-2 h-2 bg-sky-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                <div class="w-2 h-2 bg-sky-300 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LEGENDA -->
+            <div id="legendSection" class="p-8 bg-slate-900 text-white">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 text-[10px] mb-8">
+                    <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-[#FFD700] text-black flex items-center justify-center font-black">R</div> <span class="font-bold uppercase tracking-widest">Ranná</span></div>
+                    <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-[#FF8C00] text-white flex items-center justify-center font-black">P</div> <span class="font-bold uppercase tracking-widest">Poobedná</span></div>
+                    <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-[#483D8B] text-white flex items-center justify-center font-black">N</div> <span class="font-bold uppercase tracking-widest">Nočná</span></div>
+                    <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg bg-sky-400 text-slate-900 border border-black/10 flex items-center justify-center font-black">12</div> <span class="font-bold uppercase tracking-widest text-sky-400">12h Smena</span></div>
+                    <div class="flex items-center gap-3 text-nowrap"><div class="w-8 h-8 rounded-full bg-red-600 border-2 border-white shadow-md flex items-center justify-center text-white"><i data-lucide="star" class="w-4 h-4"></i></div> <span class="font-bold uppercase tracking-widest">Sviatok</span></div>
+                    <div class="flex items-center gap-3 text-nowrap"><div class="w-8 h-8 rounded bg-white text-emerald-600 border border-slate-700 flex items-center justify-center shadow-md"><i data-lucide="banknote" class="w-5 h-5"></i></div> <span class="font-bold uppercase tracking-widest text-emerald-400">Výplata</span></div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 print-hidden">
+                    <button onclick="toggleCleanMode()" class="flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3">
+                        <i data-lucide="smartphone" class="w-5 h-5"></i> Screenshot Režim
+                    </button>
+                    <button onclick="window.print()" class="flex-1 py-4 bg-[#ffa500] hover:bg-orange-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3">
+                        <i data-lucide="printer" class="w-5 h-5"></i> Tlačiť / PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+        <p class="text-center text-[10px] text-slate-400 mt-8 mb-16 uppercase tracking-[0.6em] font-black italic">Continental Púchov • 2026</p>
+    </div>
+
+    <!-- TLAČIDLO SPÄŤ PRE SCREENSHOT REŽIM -->
+    <button id="exitBtn" onclick="toggleCleanMode()" class="hidden fixed bottom-6 right-6 z-[100] bg-slate-900 text-white p-4 rounded-full shadow-2xl border-2 border-white/20">
+        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+    </button>
+
+    <script>
+        let currentTeam = 'C';
+        let isClean = false;
+        const apiKey = "";
+
+        const cycle = [
+            { t: 'R', h: 8 }, { t: 'R', h: 8 }, { t: 'R', h: 8 }, { t: 'R', h: 8 }, 
+            { t: 'N', h: 8 }, { t: 'N', h: 12 }, { t: 'N', h: 8 },                  
+            { t: 'V', h: 0 }, { t: 'V', h: 0 }, { t: 'V', h: 0 }, { t: 'V', h: 0 }, 
+            { t: 'R', h: 8 }, { t: 'R', h: 8 }, { t: 'R', h: 8 },                  
+            { t: 'N', h: 8 }, { t: 'N', h: 8 }, { t: 'N', h: 8 }, { t: 'N', h: 8 }, 
+            { t: 'V', h: 0 }, { t: 'V', h: 0 }, { t: 'V', h: 0 },                  
+            { t: 'P', h: 8 }, { t: 'P', h: 8 }, { t: 'P', h: 8 }, { t: 'P', h: 8 }, { t: 'P', h: 8 }, 
+            { t: 'V', h: 0 }, { t: 'V', h: 0 }
+        ];
+
+        const teamOffsets = { A: 21, B: 7, C: 0, D: 15 };
+        const fpcData = {
+            A: [135.0, 157.5, 176.2, 142.5, 165.0, 135.0, 165.0, 150.0, 165.0, 168.7, 150.0, 264.7],
+            B: [150.0, 150.0, 150.0, 150.0, 150.0, 150.0, 150.0, 168.7, 176.2, 157.5, 311.2, 405.0],
+            C: [165.0, 165.0, 157.5, 157.5, 165.0, 165.0, 165.0, 168.7, 176.2, 176.2, 165.0, 157.5],
+            D: [127.5, 168.7, 150.0, 150.0, 172.5, 172.5, 165.0, 153.7, 150.0, 157.5, 150.0, 101.2]
+        };
+
+        const months = [
+            { name: "Január", d: 31, s: 3, c: "bg-blue-50 text-blue-700" },
+            { name: "Február", d: 28, s: 6, c: "bg-blue-50 text-blue-700" },
+            { name: "Marec", d: 31, s: 6, c: "bg-emerald-50 text-emerald-700" },
+            { name: "Apríl", d: 30, s: 2, c: "bg-emerald-50 text-emerald-700" },
+            { name: "Máj", d: 31, s: 4, c: "bg-emerald-50 text-emerald-700" },
+            { name: "Jún", d: 30, s: 0, c: "bg-orange-50 text-orange-700" },
+            { name: "Júl", d: 31, s: 2, c: "bg-orange-50 text-orange-700" },
+            { name: "August", d: 31, s: 5, c: "bg-orange-50 text-orange-700" },
+            { name: "September", d: 30, s: 1, c: "bg-amber-50 text-amber-800" },
+            { name: "Október", d: 31, s: 3, c: "bg-amber-50 text-amber-800" },
+            { name: "November", d: 30, s: 6, c: "bg-amber-50 text-amber-800" },
+            { name: "December", d: 31, s: 1, c: "bg-rose-50 text-rose-700" },
+        ];
+
+        const holidays = ["0-1", "0-6", "3-3", "3-6", "4-1", "6-5", "7-29", "8-1", "8-15", "10-1", "10-17", "11-24", "11-25", "11-26"];
+        const paydays = ["0-9", "1-6", "2-6", "3-9", "4-8", "5-5", "6-7", "7-7", "8-7", "9-7", "10-6", "11-7"];
+        
+        // --- Pravidlá zo zadania ---
+        const forcedVoľno_A = ["6-8", "7-5", "8-3"]; 
+        const forced8hNight_A = ["6-13"];
+        
+        const forcedVoľno_B = ["0-17", "1-14", "2-14", "3-11", "4-9", "5-6", "6-4", "7-1", "8-26", "9-24", "10-21"];
+        const forced12h_B = ["1-7", "2-7", "4-2", "4-30", "5-27", "7-22", "8-19", "9-17", "10-14", "11-12"];
+        const forcedRanná_B = ["6-13"];
+        
+        const forcedVoľno_D = ["0-17", "1-14", "2-14", "3-11", "4-9", "5-6", "6-4", "7-1", "8-26", "9-24", "10-21"];
+        const forced12h_D = ["0-31", "1-28", "2-28", "3-25", "4-23", "5-20", "6-18", "7-15", "8-12", "9-10", "10-7", "11-5"];
+        
+        const general12h = ["0-17", "1-14", "2-14", "3-11", "4-9", "5-6", "6-4", "7-1", "7-29", "8-26", "9-24", "10-21", "11-19"];
+
+        function render() {
+            document.getElementById('activeTeamLabel').innerText = currentTeam;
+            document.getElementById('posterTeamLabel').innerText = currentTeam;
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            const startDate = new Date(2026, 0, 5);
+
+            months.forEach((m, mIdx) => {
+                const fpc = fpcData[currentTeam][mIdx];
+                const monthDiv = document.createElement('div');
+                monthDiv.className = "bg-white border border-slate-100 shadow-sm rounded-3xl overflow-hidden flex flex-col";
+                
+                let html = `
+                    <div class="flex justify-between items-center px-4 py-2 border-b-2 ${m.c}">
+                        <h3 class="font-black uppercase text-[10px] tracking-widest">${m.name}</h3>
+                        <div class="text-[8px] font-black bg-white/50 px-2 py-0.5 rounded-lg">${fpc.toFixed(1)}h</div>
+                    </div>
+                    <div class="p-3">
+                        <div class="grid grid-cols-7 gap-1 text-[9px] font-black text-slate-300 text-center uppercase pb-2 border-b border-slate-100 mb-2">
+                            <div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1.5">
+                `;
+
+                for(let i=0; i<m.s; i++) html += '<div></div>';
+
+                for(let d=1; d<=m.d; d++) {
+                    const currDate = new Date(2026, mIdx, d);
+                    const diffDays = Math.round((currDate - startDate) / (1000 * 60 * 60 * 24));
+                    let idx = (diffDays + teamOffsets[currentTeam]) % 28;
+                    while(idx < 0) idx += 28;
+                    
+                    const shift = cycle[idx];
+                    const isHoliday = holidays.includes(`${mIdx}-${d}`);
+                    const isPayday = paydays.includes(`${mIdx}-${d}`);
+                    const dateKey = `${mIdx}-${d}`;
+                    
+                    // Logika určenia 12h smeny
+                    let is12 = shift.h === 12;
+                    if (currentTeam === 'C' && general12h.includes(dateKey)) is12 = true;
+                    if (currentTeam === 'B' && forced12h_B.includes(dateKey)) is12 = true;
+                    if (currentTeam === 'D' && forced12h_D.includes(dateKey)) is12 = true;
+                    if (currentTeam === 'A' && ["0-24", "1-21", "2-21", "3-18", "4-16", "5-13", "6-8", "7-5", "8-3", "9-31", "10-28"].includes(dateKey)) is12 = true;
+
+                    // Logika určenia voľna
+                    let isVoľno = shift.t === 'V' && !is12;
+                    if (currentTeam === 'D' && forcedVoľno_D.includes(dateKey)) { isVoľno = true; is12 = false; }
+                    if (currentTeam === 'B' && forcedVoľno_B.includes(dateKey)) { isVoľno = true; is12 = false; }
+                    if (currentTeam === 'A' && forcedVoľno_A.includes(dateKey)) { isVoľno = true; is12 = false; }
+
+                    const isShut = (mIdx === 3 && d >= 3 && d <= 6) || (mIdx === 6 && d >= 20 && d <= 26) || (mIdx === 11 && d >= 19 && d <= 31);
+                    const isWeekend = (m.s + d - 1) % 7 >= 5;
+
+                    let bg = "bg-slate-50";
+                    let txt = "text-slate-900";
+                    let shortcut = isVoľno ? "V" : shift.t;
+
+                    if (!isVoľno) {
+                        if (shortcut === 'R') { bg = "bg-[#FFD700]"; txt = "text-black"; }
+                        else if (shortcut === 'P') { bg = "bg-[#FF8C00]"; txt = "text-white"; }
+                        else if (shortcut === 'N') { bg = "bg-[#483D8B]"; txt = "text-white"; }
+                    }
+
+                    if (is12) { bg = "bg-sky-400"; txt = "text-slate-900 font-black"; shortcut = "12"; }
+                    
+                    // Špeciálne prepisy pre 13.7.
+                    if (dateKey === "6-13") {
+                        if (currentTeam === 'A') { bg = "bg-[#483D8B]"; txt = "text-white"; shortcut = "N"; is12 = false; }
+                        if (currentTeam === 'B') { bg = "bg-[#FFD700]"; txt = "text-black"; shortcut = "R"; is12 = false; }
+                    }
+
+                    if (isHoliday) { bg = "bg-red-600"; txt = "text-white"; shortcut = ""; } 
+                    else if (isShut) { bg = "bg-red-50 shutdown-pattern"; txt = "text-red-700 font-black"; }
+
+                    html += `
+                        <div class="h-10 flex flex-col items-center justify-center rounded-xl border-2 relative ${bg} ${txt} ${shortcut !== 'V' || isHoliday || is12 ? 'border-black/5 shadow-sm' : 'border-transparent'} ${isShut && !isHoliday ? 'ring-1 ring-red-500' : ''}">
+                            <span class="text-[12px] font-black leading-none ${isWeekend ? 'underline decoration-black/20' : ''}">${d}</span>
+                            <div class="text-[7px] font-black opacity-80 leading-none mt-1 uppercase">
+                                ${isHoliday ? '<i data-lucide="star" class="w-3 h-3 fill-white"></i>' : (shortcut === 'V' && !is12 ? '' : shortcut)}
+                            </div>
+                            ${isPayday ? '<div class="absolute -bottom-1 -right-1 text-emerald-600 bg-white rounded p-0.5 shadow-md border border-slate-200"><i data-lucide="banknote" class="w-3 h-3"></i></div>' : ''}
+                        </div>
+                    `;
+                }
+
+                html += '</div></div>';
+                monthDiv.innerHTML = html;
+                grid.appendChild(monthDiv);
+            });
+            lucide.createIcons();
+        }
+
+        async function askGemini(mode) {
+            const respEl = document.getElementById('geminiResponse');
+            const loadEl = document.getElementById('geminiLoading');
+            respEl.classList.add('hidden');
+            loadEl.classList.remove('hidden');
+
+            let prompt = "";
+            const context = `Rozpis Continental 2026, Zmena ${currentTeam}.`;
+            if (mode === 'analyze') prompt = `${context} Stručne opíš môj rozpis na júl a august 2026.`;
+            else if (mode === 'vacation') prompt = `${context} Nájdi 2 najlepšie termíny v roku 2026 pre 3-dňovú dovolenku s najlepším napojením na voľné dni.`;
+            else prompt = `${context} Napíš krátky vtipný motivačný citát pre zamestnanca na tejto zmene.`;
+
+            try {
+                const result = await callGemini(prompt);
+                respEl.innerText = result;
+                respEl.classList.remove('hidden');
+            } catch {
+                respEl.innerText = "Chyba pripojenia. Skúste to prosím neskôr.";
+                respEl.classList.remove('hidden');
+            } finally {
+                loadEl.classList.add('hidden');
+            }
+        }
+
+        async function callGemini(query) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const sys = "Si asistent pre zamestnancov Continental. Odpovedaj stručne, slovensky a k veci.";
+            const payload = { contents: [{ parts: [{ text: query }] }], systemInstruction: { parts: [{ text: sys }] } };
+            
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const r = await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
+                    const d = await r.json();
+                    return d.candidates[0].content.parts[0].text;
+                } catch { await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000)); }
+            }
+        }
+
+        function toggleCleanMode() {
+            isClean = !isClean;
+            document.getElementById('controls').classList.toggle('hidden', isClean);
+            document.getElementById('exitBtn').classList.toggle('hidden', !isClean);
+            document.getElementById('bodyTag').className = isClean ? 'bg-white p-0' : 'bg-slate-100';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const btnC = document.getElementById('teamButtons');
+        ['A','B','C','D'].forEach(t => {
+            const b = document.createElement('button');
+            b.innerText = t;
+            b.className = `flex-1 py-3 px-6 rounded-2xl font-black text-sm transition-all ${t === currentTeam ? "bg-orange-500 text-white shadow-lg" : "bg-slate-50 text-slate-400"}`;
+            b.onclick = () => {
+                currentTeam = t;
+                document.querySelectorAll('#teamButtons button').forEach(el => {
+                    el.classList.remove('bg-orange-500', 'text-white', 'shadow-lg');
+                    el.classList.add('bg-slate-50', 'text-slate-400');
+                });
+                b.classList.remove('bg-slate-50', 'text-slate-400');
+                b.classList.add('bg-orange-500', 'text-white', 'shadow-lg');
+                render();
+            };
+            btnC.appendChild(b);
+        });
+
+        render();
+    </script>
+</body>
+</html>
