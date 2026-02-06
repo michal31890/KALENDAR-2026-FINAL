@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Continental 2026</title>
+    <title>Continental 2026 - Výplata</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .shutdown { background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.1) 5px, rgba(239, 68, 68, 0.1) 10px); border: 2px solid #ef4444 !important; }
@@ -17,29 +17,34 @@
         <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-3xl shadow-sm border border-slate-200 gap-4 no-print text-center md:text-left">
             <div>
                 <h1 class="text-3xl font-black text-slate-800 uppercase italic tracking-tighter text-orange-600">Continental 2026</h1>
-                <p class="text-slate-500 font-bold uppercase text-xs tracking-widest text-orange-600/60">Smenový plánovač</p>
+                <p class="text-slate-500 font-bold uppercase text-xs tracking-widest text-orange-600/60">Po-Pi: 8h / So: 12h | Štatistika smien</p>
             </div>
             <div id="controls" class="flex gap-2 bg-slate-100 p-1 rounded-2xl"></div>
-            <button onclick="window.print()" class="bg-slate-800 text-white px-8 py-3 rounded-2xl font-bold hover:bg-black transition-all shadow-lg uppercase text-sm">Tlačiť</button>
+            <button onclick="window.print()" class="bg-slate-800 text-white px-8 py-3 rounded-2xl font-bold hover:bg-black transition-all shadow-lg uppercase text-sm italic tracking-widest">Vytlačiť plán</button>
         </div>
+
         <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-10"></div>
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
-            <h3 class="font-black uppercase text-slate-800 mb-4 text-sm tracking-widest text-center md:text-left underline decoration-orange-500">Vysvetlivky smien</h3>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div class="flex items-center gap-3 bg-orange-500 p-3 rounded-2xl text-white shadow-md"><span class="font-black text-lg">R</span><span class="text-[10px] font-bold leading-tight italic text-orange-100">RANNÁ<br>06:00-14:00</span></div>
-                <div class="flex items-center gap-3 bg-blue-500 p-3 rounded-2xl text-white shadow-md"><span class="font-black text-lg">P</span><span class="text-[10px] font-bold leading-tight italic text-blue-100">POOBEDNÁ<br>14:00-22:00</span></div>
-                <div class="flex items-center gap-3 bg-slate-800 p-3 rounded-2xl text-white shadow-md"><span class="font-black text-lg text-slate-400">N</span><span class="text-[10px] font-bold leading-tight italic text-slate-400">NOČNÁ<br>22:00-06:00</span></div>
-                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border-2 border-orange-500 shadow-md"><span class="font-black text-lg text-orange-500 underline text-center">12</span><span class="text-[10px] font-bold leading-tight italic text-slate-600 uppercase">Sobota<br>12h Smena</span></div>
-                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border-2 border-red-400 shutdown shadow-md"><span class="text-[10px] font-bold leading-tight italic text-slate-600 uppercase">Celozávodná<br>dovolenka</span></div>
+
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 no-print">
+            <h3 class="font-black uppercase text-slate-800 mb-4 text-sm tracking-widest text-center md:text-left underline decoration-orange-500 italic">Legenda</h3>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                <div class="bg-orange-500 p-3 rounded-2xl text-white font-black text-xs">RANNÁ (R)</div>
+                <div class="bg-blue-500 p-3 rounded-2xl text-white font-black text-xs">POOBEDNÁ (P)</div>
+                <div class="bg-slate-800 p-3 rounded-2xl text-white font-black text-xs">NOČNÁ (N)</div>
+                <div class="border-2 border-orange-500 p-3 rounded-2xl text-slate-800 font-black text-xs italic">SOBOTA 12h</div>
+                <div class="border-2 border-red-400 shutdown p-3 rounded-2xl text-slate-800 font-black text-[10px]">ODSTÁVKA</div>
             </div>
         </div>
     </div>
+
     <script>
         let currentTeam = 'A';
         const months = ['Január','Február','Marec','Apríl','Máj','Jún','Júl','August','September','Október','November','December'];
         const holidays = ['2026-01-01','2026-01-06','2026-04-03','2026-04-06','2026-05-01','2026-05-08','2026-07-05','2026-08-29','2026-09-01','2026-09-15','2026-11-01','2026-11-17','2026-12-24','2026-12-25','2026-12-26'];
         const shutdowns = [{s:'2026-07-20', e:'2026-08-02'}, {s:'2026-12-22', e:'2026-12-31'}];
+
         function isShutdown(dateStr) { return shutdowns.some(r => dateStr >= r.s && dateStr <= r.e); }
+
         function getShift(date, team) {
             const startPoint = new Date('2024-01-01'); 
             const diffDays = Math.floor((date - startPoint) / 86400000);
@@ -58,15 +63,20 @@
             }
             return '';
         }
+
         function render() {
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
             months.forEach((name, idx) => {
+                let stats = { R: 0, P: 0, N: 0 };
                 const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-3xl shadow-sm border border-slate-100";
+                card.className = "bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex flex-col";
+                
                 let h = `<h2 class="font-black text-center mb-4 text-slate-700 border-b pb-2 uppercase text-xs tracking-widest">${name}</h2><div class="grid grid-cols-7 gap-1 text-[9px] font-bold text-slate-300 text-center mb-2 italic"><div>PO</div><div>UT</div><div>ST</div><div>ŠT</div><div>PI</div><div>SO</div><div>NE</div></div><div class="grid grid-cols-7 gap-1">`;
+                
                 const first = new Date(2026, idx, 1);
                 for(let i=1; i<(first.getDay()||7); i++) h += '<div></div>';
+                
                 for(let d=1; d<=new Date(2026, idx+1, 0).getDate(); d++) {
                     const date = new Date(2026, idx, d);
                     const dateStr = date.toISOString().split('T')[0];
@@ -74,21 +84,36 @@
                     const isSun = date.getDay() === 0;
                     const isHol = holidays.includes(dateStr);
                     const isShut = isShutdown(dateStr);
-                    let color = "bg-slate-50 text-slate-300";
-                    if(shift.includes('R')) color = "bg-orange-500 text-white font-bold";
-                    if(shift === 'P') color = "bg-blue-500 text-white font-bold";
-                    if(shift.includes('N')) color = "bg-slate-800 text-white font-bold font-bold";
+                    
+                    if(shift.includes('R')) stats.R++;
+                    if(shift === 'P') stats.P++;
+                    if(shift.includes('N')) stats.N++;
+
+                    let color = "bg-slate-50 text-slate-300 font-medium";
+                    if(shift.includes('R')) color = "bg-orange-500 text-white font-black";
+                    if(shift === 'P') color = "bg-blue-500 text-white font-black";
+                    if(shift.includes('N')) color = "bg-slate-800 text-white font-black";
+                    
                     h += `<div class="h-9 flex flex-col items-center justify-center rounded-xl text-[10px] ${color} ${isShut ? 'shutdown' : ''}"><span class="${isSun?'underline decoration-2':''} ${isHol?'holiday-text':''}">${d}</span><span class="text-[7px]">${shift}</span></div>`;
                 }
-                card.innerHTML = h + `</div>`;
+                
+                // Pridanie štatistiky na spodok karty mesiaca
+                h += `</div><div class="mt-4 pt-3 border-t border-slate-50 grid grid-cols-3 gap-1 text-[9px] font-black text-center uppercase tracking-tighter">
+                        <div class="text-orange-600">R: ${stats.R}</div>
+                        <div class="text-blue-600">P: ${stats.P}</div>
+                        <div class="text-slate-800">N: ${stats.N}</div>
+                      </div>`;
+                
+                card.innerHTML = h;
                 grid.appendChild(card);
             });
         }
+
         const ctrl = document.getElementById('controls');
         ['A','B','C','D'].forEach(t => {
             const btn = document.createElement('button');
             btn.innerText = t;
-            btn.className = `w-12 h-10 rounded-xl font-black transition-all ` + (t===currentTeam ? 'bg-white shadow text-orange-600 border border-orange-100' : 'text-slate-400');
+            btn.className = `w-12 h-10 rounded-xl font-black transition-all ` + (t===currentTeam ? 'bg-white shadow-md text-orange-600 border border-orange-100' : 'text-slate-400');
             btn.onclick = () => { currentTeam = t; render(); updateButtons(); };
             ctrl.appendChild(btn);
         });
