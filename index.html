@@ -7,40 +7,51 @@
     <title>Continental 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* TOTÁLNE VYNÚTENIE ČIERNEJ FARBY PRE ČÍSLA */
+        .day-num { 
+            color: #000000 !important; 
+            font-weight: 900 !important; 
+            font-size: 1.3rem !important;
+            display: block !important;
+        }
+        /* ŠPECIÁLNE PRE ŽLTÚ 12-tku */
+        .smena-12h { background-color: #fde047 !important; border: 3px solid #ca8a04 !important; }
+        .smena-12h .day-num, .smena-12h .shift-text { color: #000000 !important; }
+
+        /* OSTATNÉ FARBY */
+        .ranná { background-color: #f97316 !important; }
+        .poobedná { background-color: #3b82f6 !important; }
+        .nočná { background-color: #1e293b !important; }
+        
+        /* LEN NA NOČNEJ MUSÍ BYŤ BIELE, ABY TO BOLO VIDIEŤ */
+        .nočná .day-num, .nočná .shift-text { color: #ffffff !important; }
+
+        .holiday-date { background-color: #ef4444 !important; border: 2px solid #991b1b !important; }
+        .holiday-date .day-num { color: #ffffff !important; }
+
+        .payday { background-color: #22c55e !important; border: 3px solid #166534 !important; }
+        .payday .day-num { color: #ffffff !important; }
+
         .shutdown { background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.2) 5px, rgba(239, 68, 68, 0.2) 10px); border: 2px solid #ef4444 !important; }
-        /* SVIATOK - Červené pozadie, biele číslo */
-        .holiday-date { background-color: #ef4444 !important; color: white !important; font-weight: 900 !important; border: 2px solid #991b1b !important; border-radius: 12px !important; }
-        /* VÝPLATA - Zelená */
-        .payday { background-color: #16a34a !important; color: white !important; font-weight: 900 !important; border: 3px solid #14532d !important; z-index: 10; }
-        /* 12H SMENA - Žltá s čiernym číslom */
-        .smena-12h { background-color: #fde047 !important; color: #000000 !important; border: 3px solid #ca8a04 !important; transform: scale(1.05); }
-        /* ABSOLÚTNE ČIERNE ČÍSLA */
-        .day-num { color: #000000 !important; font-weight: 950 !important; font-size: 1.15em; }
-        .nočná .day-num { color: #ffffff !important; }
+        .shift-text { font-size: 10px !important; font-weight: 900 !important; color: #000000 !important; }
     </style>
 </head>
 <body class="bg-slate-200 notranslate font-sans">
-    <div class="max-w-7xl mx-auto p-2 md:p-4 text-black">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-6 rounded-3xl shadow-xl border-b-8 border-orange-500 gap-4 no-print text-center">
-            <div>
-                <h1 class="text-4xl font-black uppercase italic tracking-tighter text-slate-800">CONTINENTAL 2026</h1>
-                <p class="text-slate-500 font-bold uppercase text-xs tracking-[0.3em] mt-1">Smenový kalendár</p>
-            </div>
-            <div id="controls" class="flex gap-2 bg-slate-100 p-2 rounded-2xl border-2 border-slate-200"></div>
-            <button onclick="window.print()" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black shadow-xl uppercase italic tracking-widest">Tlačiť</button>
+    <div class="max-w-7xl mx-auto p-2">
+        <div class="mb-6 bg-white p-6 rounded-3xl shadow-xl border-b-8 border-orange-500 text-center">
+            <h1 class="text-4xl font-black uppercase italic tracking-tighter">CONTINENTAL 2026</h1>
+            <div id="controls" class="flex justify-center gap-2 mt-4"></div>
         </div>
 
         <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8"></div>
 
-        <div class="bg-white p-6 rounded-3xl shadow-lg border-2 border-slate-300 no-print">
-            <div class="grid grid-cols-2 md:grid-cols-6 gap-3 text-center">
-                <div class="bg-orange-500 p-3 rounded-xl text-black font-black text-xs uppercase shadow-sm">Ranná</div>
-                <div class="bg-blue-500 p-3 rounded-xl text-black font-black text-xs uppercase shadow-sm">Poobedná</div>
-                <div class="bg-slate-800 p-3 rounded-xl text-white font-black text-xs uppercase shadow-sm">Nočná</div>
-                <div class="bg-yellow-400 border-2 border-yellow-600 p-3 rounded-xl text-black font-black text-[10px] italic shadow-sm uppercase">Sobota 12h</div>
-                <div class="bg-green-600 p-3 rounded-xl text-white font-black text-xs shadow-md uppercase">Výplata 💶</div>
-                <div class="bg-red-600 p-3 rounded-xl text-white font-black text-xs border-2 border-red-800 shadow-md uppercase">Sviatok 🚩</div>
-            </div>
+        <div class="bg-white p-6 rounded-3xl shadow-lg border-2 border-slate-300 no-print grid grid-cols-2 md:grid-cols-3 gap-3 text-center text-[10px] font-black uppercase">
+            <div class="bg-orange-500 p-3 rounded-xl">Ranná</div>
+            <div class="bg-blue-500 p-3 rounded-xl">Poobedná</div>
+            <div class="bg-slate-800 p-3 rounded-xl text-white">Nočná</div>
+            <div class="bg-yellow-400 border-2 border-yellow-600 p-3 rounded-xl text-black">Sobota 12h</div>
+            <div class="bg-green-600 p-3 rounded-xl text-white italic tracking-widest text-xs">VÝPLATA 💶</div>
+            <div class="bg-red-600 p-3 rounded-xl text-white italic tracking-widest text-xs">SVIATOK 🚩</div>
         </div>
     </div>
 
@@ -48,10 +59,7 @@
         let currentTeam = 'A';
         const months = ['Január','Február','Marec','Apríl','Máj','Jún','Júl','August','September','Október','November','December'];
         const holidays = ['2026-01-01','2026-01-06','2026-04-03','2026-04-06','2026-05-01','2026-05-08','2026-07-05','2026-08-29','2026-09-01','2026-09-15','2026-11-01','2026-11-17','2026-12-24','2026-12-25','2026-12-26'];
-        const shutdowns = [{s:'2026-07-20', e:'2026-08-02'}, {s:'2026-12-22', e:'2026-12-31'}];
         const payDays = {0:9, 1:6, 2:6, 3:9, 4:8, 5:5, 6:7, 7:7, 8:7, 9:7, 10:6, 11:7};
-
-        function isShutdown(dateStr) { return shutdowns.some(r => dateStr >= r.s && dateStr <= r.e); }
 
         function getShift(date, team) {
             const startPoint = new Date('2024-01-01'); 
@@ -76,69 +84,48 @@
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
             months.forEach((name, idx) => {
-                let stats = { hours: 0 };
+                let hours = 0;
                 const card = document.createElement('div');
                 card.className = "bg-white p-5 rounded-[2.5rem] shadow-xl border-2 border-slate-100 flex flex-col";
-                
-                let h = `<h2 class="font-black text-center mb-4 text-slate-800 border-b-4 border-orange-500 pb-2 uppercase text-lg italic tracking-tighter text-orange-600">${name}</h2><div class="grid grid-cols-7 gap-1 text-[11px] font-black text-slate-500 text-center mb-3 tracking-widest uppercase italic"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div></div><div class="grid grid-cols-7 gap-1">`;
-                
+                let h = `<h2 class="font-black text-center mb-4 text-orange-600 uppercase text-lg italic border-b-4 border-orange-100">${name}</h2><div class="grid grid-cols-7 gap-1 text-[10px] font-black text-slate-400 text-center mb-2 uppercase"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div></div><div class="grid grid-cols-7 gap-1">`;
                 const first = new Date(2026, idx, 1);
                 for(let i=1; i<(first.getDay()||7); i++) h += '<div></div>';
-                
                 for(let d=1; d<=new Date(2026, idx+1, 0).getDate(); d++) {
                     const date = new Date(2026, idx, d);
                     const dateStr = date.toISOString().split('T')[0];
                     const shift = getShift(date, currentTeam);
-                    const isSun = date.getDay() === 0;
-                    const isSat = date.getDay() === 6;
-                    const isHol = holidays.includes(dateStr);
-                    const isShut = isShutdown(dateStr);
                     const isPayDay = (d === payDays[idx]);
+                    const isHol = holidays.includes(dateStr);
 
-                    if(shift.includes('R')) stats.hours += shift.includes('12') ? 12 : 8;
-                    if(shift === 'P') stats.hours += 8;
-                    if(shift.includes('N')) stats.hours += shift.includes('12') ? 12 : 8;
+                    if(shift.includes('R')) hours += shift.includes('12') ? 12 : 8;
+                    if(shift === 'P') hours += 8;
+                    if(shift.includes('N')) hours += shift.includes('12') ? 12 : 8;
 
-                    let colorClass = "bg-slate-50 text-slate-400 font-black";
-                    let shiftType = "";
-                    if(shift.includes('R')) { colorClass = "bg-orange-500 shadow-inner"; shiftType="ranná"; }
-                    if(shift === 'P') { colorClass = "bg-blue-500 shadow-inner"; shiftType="poobedná"; }
-                    if(shift.includes('N')) { colorClass = "bg-slate-800 shadow-inner"; shiftType="nočná"; }
-                    
-                    let paydayClass = isPayDay ? 'payday' : '';
-                    let holidayClass = isHol ? 'holiday-date' : '';
-                    let smena12hClass = shift.includes('12') ? 'smena-12h' : '';
+                    let c = "bg-slate-50";
+                    if(shift.includes('R')) c = "ranná";
+                    if(shift === 'P') c = "poobedná";
+                    if(shift.includes('N')) c = "nočná";
+                    if(shift.includes('12')) c += " smena-12h";
+                    if(isPayDay) c = "payday";
+                    if(isHol) c = "holiday-date";
 
-                    h += `<div class="h-11 flex flex-col items-center justify-center rounded-2xl ${colorClass} ${paydayClass} ${holidayClass} ${isShut ? 'shutdown' : ''} ${smena12hClass} ${shiftType}">
-                            <span class="day-num ${isSun?'underline decoration-2':''}">${d}</span>
-                            <span class="text-[9px] mt-[-3px] font-black uppercase ${shiftType==='nočná'?'text-white':'text-black'}">${isPayDay && !shift ? '€' : shift}</span>
+                    h += `<div class="h-12 flex flex-col items-center justify-center rounded-2xl ${c}">
+                            <span class="day-num">${d}</span>
+                            <span class="shift-text">${isPayDay && !shift ? '€' : shift}</span>
                           </div>`;
                 }
-                
-                h += `</div><div class="mt-5 pt-4 border-t-2 border-slate-100">
-                        <div class="bg-slate-900 text-orange-500 py-3 rounded-2xl font-black text-center text-xl shadow-lg border-b-4 border-orange-600 uppercase italic">
-                            ${stats.hours} Hodín
-                        </div>
-                      </div>`;
-                
-                card.innerHTML = h;
-                grid.appendChild(card);
+                h += `</div><div class="mt-4 bg-slate-900 text-orange-500 py-3 rounded-2xl font-black text-center text-xl uppercase italic border-b-4 border-orange-600">${hours} HODÍN</div>`;
+                card.innerHTML = h; grid.appendChild(card);
             });
         }
 
-        const ctrl = document.getElementById('controls');
         ['A','B','C','D'].forEach(t => {
             const btn = document.createElement('button');
             btn.innerText = t;
-            btn.className = `w-14 h-14 rounded-2xl font-black text-2xl transition-all shadow-md ` + (t===currentTeam ? 'bg-orange-600 text-white scale-110 shadow-orange-300' : 'bg-white text-slate-400 border-2 border-slate-200');
-            btn.onclick = () => { currentTeam = t; render(); updateButtons(); };
-            ctrl.appendChild(btn);
+            btn.className = `w-14 h-14 rounded-2xl font-black text-2xl border-2 ` + (t===currentTeam ? 'bg-orange-600 text-white border-orange-700 scale-110 shadow-lg' : 'bg-white text-slate-400 border-slate-200');
+            btn.onclick = () => { currentTeam = t; render(); };
+            document.getElementById('controls').appendChild(btn);
         });
-        function updateButtons() {
-            document.querySelectorAll('#controls button').forEach(b => {
-                b.className = `w-14 h-14 rounded-2xl font-black text-2xl transition-all shadow-md ` + (b.innerText===currentTeam ? 'bg-orange-600 text-white scale-110 shadow-orange-300' : 'text-slate-400 bg-white border-2 border-slate-200');
-            });
-        }
         render();
     </script>
 </body>
