@@ -8,11 +8,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .shutdown { background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.2) 5px, rgba(239, 68, 68, 0.2) 10px); border: 2px solid #ef4444 !important; }
-        /* SVIATOK - Absolútna priorita červenej */
-        .holiday-date { color: #ffffff !important; background-color: #ef4444 !important; font-weight: 900 !important; border: 2px solid #991b1b !important; border-radius: 12px !important; }
-        .holiday-date span { color: white !important; }
+        /* SVIATOK - Červené pozadie, biele písmo */
+        .holiday-date { background-color: #ef4444 !important; color: white !important; font-weight: 900 !important; border: 2px solid #991b1b !important; border-radius: 12px !important; }
         /* VÝPLATA - Zelená */
-        .payday { background-color: #16a34a !important; color: white !important; font-weight: 900 !important; border: 3px solid #14532d !important; }
+        .payday { background-color: #16a34a !important; color: white !important; font-weight: 900 !important; border: 3px solid #14532d !important; z-index: 10; }
+        /* 12H SMENA - Žltá farba, aby nesplývala */
+        .smena-12h { background-color: #fde047 !important; color: #000000 !important; border: 3px solid #ca8a04 !important; transform: scale(1.05); shadow: 0 4px 6px rgba(0,0,0,0.3); }
         /* ČIERNE ČÍSLA */
         .day-num { color: #000000 !important; font-weight: 900 !important; font-size: 1.1em; }
         .nočná .day-num { color: #ffffff !important; }
@@ -22,20 +23,21 @@
     <div class="max-w-7xl mx-auto p-2 md:p-4">
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 bg-white p-6 rounded-3xl shadow-xl border-b-8 border-orange-500 gap-4 no-print text-center">
             <div>
-                <h1 class="text-4xl font-black uppercase italic tracking-tighter">Continental 2026</h1>
-                <p class="text-red-600 font-black uppercase text-xl mt-2 tracking-widest italic">🚩 SVIATKY SÚ ČERVENÉ</p>
+                <h1 class="text-4xl font-black uppercase italic tracking-tighter text-slate-800">Continental 2026</h1>
+                <p class="text-blue-700 font-black uppercase text-xl mt-2 italic underline decoration-yellow-400">12H SMENY SÚ ŽLTÉ 🟡</p>
             </div>
-            <div id="controls" class="flex gap-2 bg-slate-100 p-2 rounded-2xl border-2 border-slate-200 shadow-inner"></div>
+            <div id="controls" class="flex gap-2 bg-slate-100 p-2 rounded-2xl border-2 border-slate-200"></div>
             <button onclick="window.print()" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black shadow-xl uppercase italic">TLAČIŤ</button>
         </div>
 
         <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8"></div>
 
         <div class="bg-white p-6 rounded-3xl shadow-lg border-2 border-slate-300 no-print">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-                <div class="bg-orange-500 p-3 rounded-xl text-black font-black text-xs">RANNÁ</div>
-                <div class="bg-blue-500 p-3 rounded-xl text-black font-black text-xs">POOBEDNÁ</div>
-                <div class="bg-slate-800 p-3 rounded-xl text-white font-black text-xs">NOČNÁ</div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
+                <div class="bg-orange-500 p-3 rounded-xl text-black font-black text-xs uppercase">RANNÁ</div>
+                <div class="bg-blue-500 p-3 rounded-xl text-black font-black text-xs uppercase">POOBEDNÁ</div>
+                <div class="bg-slate-800 p-3 rounded-xl text-white font-black text-xs uppercase">NOČNÁ</div>
+                <div class="bg-yellow-400 border-2 border-yellow-600 p-3 rounded-xl text-black font-black text-xs italic shadow-md">SOBOTA 12h</div>
                 <div class="bg-red-600 p-3 rounded-xl text-white font-black text-xs border-2 border-red-800 shadow-lg">SVIATOK 🚩</div>
             </div>
         </div>
@@ -77,7 +79,7 @@
                 const card = document.createElement('div');
                 card.className = "bg-white p-5 rounded-[2.5rem] shadow-xl border-2 border-slate-100 flex flex-col";
                 
-                let h = `<h2 class="font-black text-center mb-4 text-slate-800 border-b-4 border-orange-500 pb-2 uppercase text-lg italic tracking-tighter">${name}</h2><div class="grid grid-cols-7 gap-1 text-[11px] font-black text-slate-500 text-center mb-3 tracking-widest uppercase italic"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div></div><div class="grid grid-cols-7 gap-1">`;
+                let h = `<h2 class="font-black text-center mb-4 text-slate-800 border-b-4 border-orange-500 pb-2 uppercase text-lg italic tracking-tighter text-orange-600">${name}</h2><div class="grid grid-cols-7 gap-1 text-[11px] font-black text-slate-500 text-center mb-3 tracking-widest uppercase italic"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>So</div><div>Ne</div></div><div class="grid grid-cols-7 gap-1">`;
                 
                 const first = new Date(2026, idx, 1);
                 for(let i=1; i<(first.getDay()||7); i++) h += '<div></div>';
@@ -102,13 +104,13 @@
                     if(shift === 'P') { colorClass = "bg-blue-500 shadow-inner"; shiftType="poobedná"; }
                     if(shift.includes('N')) { colorClass = "bg-slate-800 shadow-inner"; shiftType="nočná"; }
                     
-                    let extraStyle = (isSat && shift !== '') ? 'ring-4 ring-white ring-inset border-2 border-black scale-105' : '';
                     let paydayClass = isPayDay ? 'payday' : '';
                     let holidayClass = isHol ? 'holiday-date' : '';
+                    let smena12hClass = shift.includes('12') ? 'smena-12h' : '';
 
-                    h += `<div class="h-11 flex flex-col items-center justify-center rounded-2xl ${colorClass} ${paydayClass} ${holidayClass} ${isShut ? 'shutdown' : ''} ${extraStyle} ${shiftType}">
+                    h += `<div class="h-11 flex flex-col items-center justify-center rounded-2xl ${colorClass} ${paydayClass} ${holidayClass} ${isShut ? 'shutdown' : ''} ${smena12hClass} ${shiftType}">
                             <span class="day-num ${isSun?'underline decoration-2':''}">${d}</span>
-                            <span class="text-[9px] mt-[-3px] font-black uppercase text-black ${shiftType==='nočná'?'text-white':''}">${isPayDay && !shift ? '€' : shift}</span>
+                            <span class="text-[9px] mt-[-3px] font-black uppercase ${shiftType==='nočná'?'text-white':'text-black'}">${isPayDay && !shift ? '€' : shift}</span>
                           </div>`;
                 }
                 
