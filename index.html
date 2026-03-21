@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - FIX Štvrtky</title>
+    <title>Continental 2026 - PRESNÝ FOND</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -24,7 +24,7 @@
 
         <div class="bg-white flex-grow shadow-2xl">
             <div class="p-3 bg-slate-900 text-white flex justify-between items-center uppercase font-black text-[10px] tracking-widest">
-                <span>Smeny 2026</span>
+                <span>Fond hodín (bez sviatkov a odstávok)</span>
                 <span class="text-orange-500 text-sm">Zmena <span id="activeTeamLabel">C</span></span>
             </div>
 
@@ -36,7 +36,7 @@
                     <div class="flex flex-col items-center gap-2"><div class="w-10 h-10 rounded-xl bg-[#FF8C00] text-white flex items-center justify-center border-2 border-white/20">P</div>Poob. 8h</div>
                     <div class="flex flex-col items-center gap-2"><div class="w-10 h-10 rounded-xl bg-[#483D8B] text-white flex items-center justify-center border-2 border-white/20">N</div>Nočná 8h</div>
                     <div class="flex flex-col items-center gap-2"><div class="w-10 h-10 rounded-xl bg-cyan-400 text-black flex items-center justify-center border-2 border-black font-black">12</div>12h SOBOTA</div>
-                    <div class="flex flex-col items-center gap-2"><div class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center border-2 border-white/20">★</div>Sviatok</div>
+                    <div class="flex flex-col items-center gap-2"><div class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center border-2 border-white/20 font-black text-xs">★</div>Sviatok</div>
                 </div>
             </div>
         </div>
@@ -44,26 +44,34 @@
 
     <script>
         let currentTeam = 'C';
-        // ČISTÝ 8h CYKLUS (bez natvrdo vpísaných 12-tok)
+        
+        // Fixnutý cyklus: 4 dni R, 2 dni V, 4 dni N, 2 dni V, 4 dni P, 12 dní V (spolu 28 dní)
+        // Toto je najčastejší 4-zmenný kalendár v Púchove
         const cycle = [
-            {t:'R',h:8},{t:'R',h:8},{t:'R',h:8},{t:'R',h:8},{t:'N',h:8},{t:'N',h:8},{t:'N',h:8},
-            {t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'R',h:8},{t:'R',h:8},{t:'R',h:8},
-            {t:'N',h:8},{t:'N',h:8},{t:'N',h:8},{t:'N',h:8},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},
-            {t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'V',h:0},{t:'V',h:0}
+            {t:'R',h:8},{t:'R',h:8},{t:'R',h:8},{t:'R',h:8},{t:'V',h:0},{t:'V',h:0},
+            {t:'N',h:8},{t:'N',h:8},{t:'N',h:8},{t:'N',h:8},{t:'V',h:0},{t:'V',h:0},
+            {t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'V',h:0},{t:'V',h:0},
+            {t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0}
         ];
-        const teamOffsets = { A: 21, B: 7, C: 0, D: 14 };
+
+        // Offsety nastavené tak, aby C začínala 1.1.2026 voľnom a potom nabehla na R (podľa tvojho papiera)
+        const teamOffsets = { A: 14, B: 0, C: 21, D: 7 };
+        
         const months = [
             {n:"Január",d:31,s:3},{n:"Február",d:28,s:6},{n:"Marec",d:31,s:6},{n:"Apríl",d:30,s:2},
             {n:"Máj",d:31,s:4},{n:"Jún",d:30,s:0},{n:"Júl",d:31,s:2},{n:"August",d:31,s:5},
             {n:"September",d:30,s:1},{n:"Október",d:31,s:3},{n:"November",d:30,s:6},{n:"December",d:31,s:1}
         ];
-        const holidays = ["0-1","0-6","3-3","3-6","4-1","6-5","7-29","10-1","11-24","11-25","11-26"];
+
+        const holidays = ["0-1","0-6","3-3","3-6","4-1","4-8","6-5","7-29","8-1","8-15","10-1","10-17","11-24","11-25","11-26"];
 
         function render() {
             document.getElementById('activeTeamLabel').innerText = currentTeam;
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
-            const startDate = new Date(2026, 0, 5);
+            
+            // Štartujeme presne od 1. januára 2026
+            const startDate = new Date(2026, 0, 1);
 
             months.forEach((m, mIdx) => {
                 let totalH = 0;
@@ -72,10 +80,11 @@
                 let h = `<div class="bg-slate-900 px-3 py-2 flex justify-between items-center"><h3 class="font-black uppercase text-[10px] text-white italic tracking-widest">${m.n}</h3><span class="bg-orange-500 text-black text-[10px] px-2 py-0.5 rounded font-black" id="h-${mIdx}">0H</span></div><div class="p-2"><div class="grid grid-cols-7 gap-1 text-[8px] font-black text-slate-400 text-center mb-2 uppercase"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div class="text-orange-500">So</div><div class="text-orange-400">Ne</div></div><div class="grid grid-cols-7 gap-1">`;
                 
                 for(let i=0; i<m.s; i++) h += '<div></div>';
+                
                 for(let d=1; d<=m.d; d++) {
                     const currDate = new Date(2026, mIdx, d);
-                    const dayOfWeek = currDate.getDay(); // 6 = SOBOTA, 4 = ŠTVRTOK
-                    const diff = Math.round((currDate - startDate) / 86400000);
+                    const dayOfWeek = currDate.getDay(); 
+                    const diff = Math.floor((currDate - startDate) / 86400000);
                     let idx = ((diff + teamOffsets[currentTeam]) % 28 + 28) % 28;
                     const shift = cycle[idx];
                     
@@ -85,24 +94,25 @@
                     else if(shift.t === 'P') { bg = "bg-[#FF8C00]"; txt = "text-white"; }
                     else if(shift.t === 'N') { bg = "bg-[#483D8B]"; txt = "text-white"; }
                     
-                    // HLAVNÁ OPRAVA: Iba SOBOTA (6) prepisuje na 12h
+                    // SOBOTA JE 12-KA
                     if(dayOfWeek === 6 && (shift.t === 'R' || shift.t === 'N')) {
                         bg = "bg-cyan-400"; 
                         txt = "text-black"; 
                         label = "12";
                         hours = 12;
                     }
-                    
-                    // ODSTÁVKA: Júl 20-26
-                    const isShut = (mIdx === 3 && d >= 3 && d <= 6) || 
-                                   (mIdx === 6 && d >= 20 && d <= 26) || 
-                                   (mIdx === 11 && d >= 19 && d <= 31);
 
+                    const isHoliday = holidays.includes(`${mIdx}-${d}`);
+                    const isShut = (mIdx === 3 && d >= 3 && d <= 6) || (mIdx === 6 && d >= 20 && d <= 26) || (mIdx === 11 && d >= 19 && d <= 31);
+
+                    // Sviatok a odstávka = 0 hodín
+                    if (isHoliday || isShut) { hours = 0; }
                     if(isShut) bg = "shutdown-active";
-                    if(holidays.includes(`${mIdx}-${d}`)) { bg = "bg-red-600"; txt = "text-white"; label = "★"; }
+                    if(isHoliday) { bg = "bg-red-600"; txt = "text-white"; label = "★"; }
                     
                     h += `<div class="h-10 flex flex-col items-center justify-center rounded-xl ${bg} ${txt} text-[11px] font-black border border-black/5 shadow-sm">${d}<span class="text-[7px] uppercase tracking-tighter">${label !== 'V' ? label : ''}</span></div>`;
-                    if(!holidays.includes(`${mIdx}-${d}`)) totalH += hours;
+                    
+                    totalH += hours;
                 }
                 monthDiv.innerHTML = h + '</div></div>';
                 grid.appendChild(monthDiv);
