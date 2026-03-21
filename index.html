@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - FIX 10.4. Ranná</title>
+    <title>Continental 2026 - PRESNÝ APRÍL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
         .shutdown-pattern { background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.1) 5px, rgba(239, 68, 68, 0.1) 10px); }
     </style>
 </head>
 <body>
 
     <div class="max-w-6xl mx-auto min-h-screen flex flex-col">
-        <div class="p-4 bg-white shadow-sm border-b sticky top-0 z-50 flex justify-between items-center">
+        <div class="p-4 bg-white shadow-md border-b sticky top-0 z-50 flex justify-between items-center">
             <h1 class="font-black text-xl italic uppercase tracking-tighter text-slate-800">Continental <span class="text-orange-500">2026</span></h1>
             <div id="teamButtons" class="flex gap-1"></div>
         </div>
@@ -28,20 +28,20 @@
     <script>
         let currentTeam = 'C';
 
-        // 28-dňový cyklus Continental (4-3-4-3-4-3-5-2)
+        // Fixný cyklus: 4R - 3N - 4V - 3R - 4N - 3V - 5P - 2V
         const cycle = [
             'R','R','R','R', // 0-3
             'N','N','N',      // 4-6
-            'V','V','V','V', // 7-10 (TOTO BUDE 6.4.-9.4.)
-            'R','R','R',      // 11-13 (TOTO BUDE 10.4.-12.4. RANNÁ)
+            'V','V','V','V', // 7-10  <-- TOTO BUDE 6.4. až 9.4. (VOĽNO)
+            'R','R','R',      // 11-13 <-- TOTO BUDE 10.4. až 12.4. (RANNÁ)
             'N','N','N','N', // 14-17
             'V','V','V',      // 18-20
             'P','P','P','P','P', // 21-25
             'V','V'           // 26-27
         ];
 
-        // OFFSET 21 PRE ZMENU C SEDÍ NA TVOJ POPIS (6.4. Voľno, 10.4. Ranná)
-        const teamOffsets = { A: 14, B: 7, C: 21, D: 0 };
+        // NASTAVENÝ OFFSET 7 PRE C - ABY 10.4. BOLA RANNÁ (index 11)
+        const teamOffsets = { A: 0, B: 21, C: 7, D: 14 };
 
         const months = [
             { n: "Január", d: 31, s: 3 }, { n: "Február", d: 28, s: 6 }, { n: "Marec", d: 31, s: 6 },
@@ -60,8 +60,8 @@
 
             months.forEach((m, mIdx) => {
                 const monthDiv = document.createElement('div');
-                monthDiv.className = "bg-white border rounded-3xl overflow-hidden shadow-sm";
-                let h = `<div class="bg-slate-900 text-white px-4 py-2 text-[11px] font-black uppercase italic">${m.n}</div><div class="p-3 grid grid-cols-7 gap-1">`;
+                monthDiv.className = "bg-white border-2 border-slate-200 rounded-3xl overflow-hidden shadow-sm";
+                let h = `<div class="bg-slate-900 text-white px-4 py-2 text-[11px] font-black uppercase italic tracking-widest">${m.n}</div><div class="p-3 grid grid-cols-7 gap-1">`;
                 
                 for(let i=0; i<m.s; i++) h += '<div></div>';
                 
@@ -82,7 +82,7 @@
                     if(type === 'P') { bg = "bg-[#FF8C00]"; txt = "text-white"; }
                     if(type === 'N') { bg = "bg-[#483D8B]"; txt = "text-white"; }
                     
-                    // Sobota 12h
+                    // SOBOTA 12h, NEDEĽA 8h
                     if(dayW === 6 && type !== 'V') {
                         if(type === 'R') bg = "bg-sky-400 text-black";
                         label = "12";
@@ -91,7 +91,7 @@
                     if(isH) { bg = "bg-red-600"; txt = "text-white"; label = "★"; }
                     else if(isShut) { bg = "bg-red-50 shutdown-pattern text-red-700"; }
 
-                    h += `<div class="h-9 flex flex-col items-center justify-center rounded-xl border text-[11px] font-black ${bg} ${txt}">${d}<span class="text-[7px] leading-none mt-0.5">${label === 'V' ? '' : label}</span></div>`;
+                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-xl border-2 text-[11px] font-black ${bg} ${txt} transition-all border-black/5">${d}<span class="text-[8px] leading-none mt-1 uppercase">${label === 'V' ? '' : label}</span></div>`;
                 }
                 monthDiv.innerHTML = h + '</div></div>';
                 grid.appendChild(monthDiv);
@@ -101,7 +101,7 @@
         ['A','B','C','D'].forEach(t => {
             const b = document.createElement('button');
             b.innerText = t;
-            b.className = `w-10 h-10 rounded-xl font-black border-2 transition-all ${t === currentTeam ? 'bg-orange-500 border-orange-600 text-white' : 'bg-white border-slate-100 text-slate-400'}`;
+            b.className = `w-10 h-10 rounded-xl font-black border-2 transition-all ${t === currentTeam ? 'bg-orange-500 border-orange-600 text-white scale-110 shadow-lg' : 'bg-white border-slate-100 text-slate-400'}`;
             b.onclick = () => { currentTeam = t; render(); };
             document.getElementById('teamButtons').appendChild(b);
         });
