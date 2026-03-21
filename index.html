@@ -2,72 +2,85 @@
 <html lang="sk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Continental 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .holiday-bg { background-color: #dc2626 !important; }
-        .total-hours { background-color: #000000; color: #ffffff; padding: 2px 8px; border-radius: 8px; font-size: 0.8rem; }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-100 p-2 md:p-4 text-slate-900">
-    <div class="max-w-[1600px] mx-auto">
-        <header class="bg-white rounded-3xl shadow-sm border border-slate-200 p-4 mb-6 text-center">
-            <h1 class="text-3xl font-black italic tracking-tighter text-orange-600">Kontinentálne 2026</h1>
+<body class="bg-slate-100 p-4">
+    <div class="max-w-7xl mx-auto">
+        <header class="bg-white p-6 rounded-3xl shadow-sm mb-6 text-center border-b-4 border-orange-500">
+            <h1 class="text-3xl font-black italic uppercase text-slate-800">Kontinentálne <span class="text-orange-600">2026</span></h1>
             <div id="teamButtons" class="flex justify-center gap-2 mt-4"></div>
         </header>
-        <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"></div>
+        <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
     </div>
+
     <script>
-        const refDate = new Date(2026, 0, 1);
         let currentTeam = 'C';
-        const months = ['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December'];
-        const shifts = ['R', 'R', 'R', 'R', 'N', 'V', 'R', 'R', 'R', 'R', 'N', 'N', 'R', 'V', 'R', 'V', 'V', 'P', 'P', 'V', 'V'];
-        function getShift(date, team) {
-            const diffDays = Math.floor((date - refDate) / 86400000);
-            const offsets = { 'C': 0, 'A': 7, 'B': 14, 'D': 21 };
-            const idx = ((diffDays + offsets[team]) % 28 + 28) % 28;
-            return shifts[idx] === 'V' ? '' : shifts[idx];
-        }
+        const cycle = [
+            {t:'R',h:8},{t:'R',h:8},{t:'R',h:8},{t:'R',h:8},{t:'N',h:8},{t:'N',h:12},{t:'N',h:8},
+            {t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'R',h:8},{t:'R',h:8},{t:'R',h:8},
+            {t:'N',h:8},{t:'N',h:8},{t:'N',h:8},{t:'N',h:8},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},
+            {t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'V',h:0},{t:'V',h:0}
+        ];
+        const teamOffsets = { A: 21, B: 7, C: 0, D: 14 };
+        const months = [
+            {n:"Január",d:31,s:3},{n:"Február",d:28,s:6},{n:"Marec",d:31,s:6},{n:"Apríl",d:30,s:2},
+            {n:"Máj",d:31,s:4},{n:"Jún",d:30,s:0},{n:"Júl",d:31,s:2},{n:"August",d:31,s:5},
+            {n:"September",d:30,s:1},{n:"Október",d:31,s:3},{n:"November",d:30,s:6},{n:"December",d:31,s:1}
+        ];
+        const holidays = ["0-1","0-6","3-3","3-6","4-1","6-5","7-29","10-1","11-24","11-25","11-26"];
+
         function render() {
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
-            months.forEach((monthName, mIdx) => {
-                let totalHours = 0;
+            const startDate = new Date(2026, 0, 5);
+
+            months.forEach((m, mIdx) => {
+                let totalH = 0;
                 const card = document.createElement('div');
-                card.className = 'bg-white p-4 rounded-2xl shadow-sm border border-slate-200';
-                let h = `<h2 class="text-xl font-black mb-4 flex justify-between italic text-slate-800">${monthName} <span class="total-hours">HODÍN</span></h2><div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 mb-2 uppercase"><div>PO</div><div>UT</div><div>ST</div><div>ŠT</div><div>PI</div><div class="text-orange-500">SO</div><div class="text-orange-500">NE</div></div><div class="grid grid-cols-7 gap-1">`;
-                const firstDay = new Date(2026, mIdx, 1);
-                for(let i=1; i<(firstDay.getDay() || 7); i++) h += `<div></div>`;
-                for(let d=1; d<=new Date(2026, mIdx+1, 0).getDate(); d++) {
-                    const date = new Date(2026, mIdx, d);
-                    const shift = getShift(date, currentTeam);
-                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-xl bg-slate-50 relative">
-                        <span class="text-xs text-slate-400">${d}</span>
-                        <span class="text-[10px] font-black">${shift}</span>
-                    </div>`;
-                    if(shift) totalHours += 8;
+                card.className = "bg-white p-4 rounded-2xl shadow-sm border border-slate-200";
+                let h = `<div class="flex justify-between items-center mb-4"><h3 class="font-black uppercase italic">${m.n}</h3><span class="bg-slate-900 text-white text-[10px] px-2 py-1 rounded-lg" id="hours-${mIdx}">0 HODÍN</span></div><div class="grid grid-cols-7 gap-1 text-[10px] font-bold text-slate-400 text-center mb-2"><div>PO</div><div>UT</div><div>ST</div><div>ŠT</div><div>PI</div><div class="text-orange-500">SO</div><div class="text-orange-500">NE</div></div><div class="grid grid-cols-7 gap-1">`;
+                
+                for(let i=0; i<m.s; i++) h += '<div></div>';
+                for(let d=1; d<=m.d; d++) {
+                    const currDate = new Date(2026, mIdx, d);
+                    const diff = Math.round((currDate - startDate) / 86400000);
+                    let idx = ((diff + teamOffsets[currentTeam]) % 28 + 28) % 28;
+                    const shift = cycle[idx];
+                    let bg = "bg-slate-50";
+                    let txt = "text-slate-900";
+                    if(shift.t === 'R') { bg = "bg-yellow-400"; }
+                    else if(shift.t === 'P') { bg = "bg-orange-500"; txt = "text-white"; }
+                    else if(shift.t === 'N') { bg = "bg-indigo-900"; txt = "text-white"; }
+                    if(holidays.includes(`${mIdx}-${d}`)) { bg = "bg-red-600"; txt = "text-white"; }
+                    
+                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-lg ${bg} ${txt} text-[10px] font-bold border border-black/5 shadow-sm">${d}<span>${shift.t !== 'V' ? shift.t : ''}</span></div>`;
+                    if(!holidays.includes(`${mIdx}-${d}`)) totalH += shift.h;
                 }
-                h += `</div>`;
-                card.innerHTML = h;
-                card.querySelector('.total-hours').innerText = `${totalHours} HODÍN`;
+                card.innerHTML = h + '</div>';
                 grid.appendChild(card);
+                document.getElementById(`hours-${mIdx}`).innerText = `${totalH} HODÍN`;
             });
         }
-        const container = document.getElementById('teamButtons');
-        ['A', 'D', 'C', 'B'].forEach(t => {
+
+        const btnCont = document.getElementById('teamButtons');
+        ['A','B','C','D'].forEach(t => {
             const b = document.createElement('button');
             b.innerText = t;
-            b.className = `w-12 h-12 rounded-xl font-black text-xl transition-all ${t === currentTeam ? 'bg-orange-500 text-white shadow-lg scale-110' : 'bg-white text-slate-400 border border-slate-200'}`;
-            b.onclick = () => { currentTeam = t; render(); updateBtn(); };
-            container.appendChild(b);
+            b.className = `w-12 h-12 rounded-xl font-black transition-all ${t === currentTeam ? 'bg-orange-500 text-white shadow-lg' : 'bg-white text-slate-400 border'}`;
+            b.onclick = () => { currentTeam = t; render(); updateBtns(); };
+            btnCont.appendChild(b);
         });
-        function updateBtn() {
-            document.querySelectorAll('#teamButtons button').forEach(el => {
-                const active = el.innerText === currentTeam;
-                el.className = `w-12 h-12 rounded-xl font-black text-xl transition-all ${active ? 'bg-orange-500 text-white shadow-lg scale-110' : 'bg-white text-slate-400 border border-slate-200'}`;
+
+        function updateBtns() {
+            document.querySelectorAll('#teamButtons button').forEach(b => {
+                b.className = `w-12 h-12 rounded-xl font-black transition-all ${b.innerText === currentTeam ? 'bg-orange-500 text-white shadow-lg' : 'bg-white text-slate-400 border'}`;
             });
         }
         render();
