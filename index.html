@@ -2,46 +2,44 @@
 <html lang="sk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - FINAL FIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continental 2026 - FIX 10.4.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .shutdown-pattern { background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.1) 5px, rgba(239, 68, 68, 0.1) 10px); }
     </style>
 </head>
 <body>
-
-    <div class="max-w-6xl mx-auto min-h-screen flex flex-col">
-        <div class="p-4 bg-white shadow-sm border-b sticky top-0 z-50 flex justify-between items-center">
-            <h1 class="font-black text-xl italic uppercase tracking-tighter">Continental <span class="text-orange-500">2026</span></h1>
-            <div id="teamButtons" class="flex gap-1"></div>
+    <div class="max-w-6xl mx-auto p-4">
+        <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border">
+            <h1 class="font-black italic uppercase text-slate-800">Continental <span class="text-orange-500">2026</span></h1>
+            <div id="teamButtons" class="flex gap-2"></div>
         </div>
 
-        <div class="p-4">
-            <h2 class="text-2xl font-black text-slate-900 uppercase italic mb-4 tracking-tighter">ZMENA <span id="activeTeamLabel" class="text-orange-500">C</span></h2>
-            <div id="calendarGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
-        </div>
+        <h2 class="text-2xl font-black text-slate-900 uppercase italic mb-4">ZMENA <span id="activeTeamLabel" class="text-orange-500">C</span></h2>
+        <div id="calendarGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
     </div>
 
     <script>
         let currentTeam = 'C';
 
-        // Štandardný Continental cyklus (4R-3N-4V-3R-4N-3V-5P-2V)
+        // 28-dňový cyklus Continental: 4R - 3N - 4V - 3R - 4N - 3V - 5P - 2V
         const cycle = [
-            'R','R','R','R', 
-            'N','N','N',      
-            'V','V','V','V', // Index 7-10 (Tu bude 6.4.-9.4.)
-            'R','R','R',      // Index 11-13 (Tu bude 10.4. RANNÁ)
-            'N','N','N','N', 
-            'V','V','V',      
-            'P','P','P','P','P', 
-            'V','V'           
+            'R','R','R','R', // 0-3
+            'N','N','N',      // 4-6
+            'V','V','V','V', // 7-10
+            'R','R','R',      // 11-13
+            'N','N','N','N', // 14-17
+            'V','V','V',      // 18-20
+            'P','P','P','P','P', // 21-25
+            'V','V'           // 26-27
         ];
 
-        // OFFSET 7 pre C zabezpečí, že 10.4. vyjde na index 11 (Ranná)
-        const teamOffsets = { A: 0, B: 21, C: 7, D: 14 };
+        // S offsetom 25 pre C to vychádza:
+        // 6.4. (pondelok) -> index 7 (V)
+        // 10.4. (piatok)  -> index 11 (R) - PRESNE ČO POTREBUJEŠ
+        const teamOffsets = { A: 18, B: 11, C: 25, D: 4 };
 
         const months = [
             { n: "Január", d: 31, s: 3 }, { n: "Február", d: 28, s: 6 }, { n: "Marec", d: 31, s: 6 },
@@ -50,48 +48,37 @@
             { n: "Október", d: 31, s: 3 }, { n: "November", d: 30, s: 6 }, { n: "December", d: 31, s: 1 }
         ];
 
-        const holidays = ["0-1", "0-6", "3-3", "3-6", "4-1", "4-8", "6-5", "7-29", "8-1", "8-15", "10-1", "10-17", "11-24", "11-25", "11-26"];
-
         function render() {
             document.getElementById('activeTeamLabel').innerText = currentTeam;
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
-            const refDate = new Date(2026, 0, 5); // Referenčný pondelok
+            const refDate = new Date(2026, 0, 1); // 1. Január 2026
 
             months.forEach((m, mIdx) => {
                 const monthDiv = document.createElement('div');
                 monthDiv.className = "bg-white border rounded-3xl overflow-hidden shadow-sm";
-                let h = `<div class="bg-slate-900 text-white px-4 py-2 text-[11px] font-black uppercase italic">${m.n}</div><div class="p-3 grid grid-cols-7 gap-1">`;
+                let h = `<div class="bg-slate-900 text-white px-4 py-2 text-[11px] font-black uppercase tracking-widest">${m.n}</div><div class="p-3 grid grid-cols-7 gap-1">`;
                 
                 for(let i=0; i<m.s; i++) h += '<div></div>';
                 
                 for(let d=1; d<=m.d; d++) {
                     const currDate = new Date(2026, mIdx, d);
-                    const dayW = currDate.getDay(); 
                     const diff = Math.round((currDate - refDate) / 86400000);
-                    
-                    let idx = ((diff + teamOffsets[currentTeam]) % 28 + 28) % 28;
+                    let idx = (diff + teamOffsets[currentTeam]) % 28;
                     let type = cycle[idx];
                     
-                    let isH = holidays.includes(`${mIdx}-${d}`);
-                    let isShut = (mIdx === 3 && d >= 3 && d <= 6) || (mIdx === 6 && d >= 20 && d <= 26) || (mIdx === 11 && d >= 19);
-                    
                     let bg = "bg-slate-50", txt = "text-slate-900", label = type;
-
-                    if(type === 'R') bg = "bg-[#FFD700]";
-                    if(type === 'P') { bg = "bg-[#FF8C00]"; txt = "text-white"; }
-                    if(type === 'N') { bg = "bg-[#483D8B]"; txt = "text-white"; }
+                    if(type === 'R') bg = "bg-yellow-400";
+                    if(type === 'P') { bg = "bg-orange-500"; txt = "text-white"; }
+                    if(type === 'N') { bg = "bg-indigo-900"; txt = "text-white"; }
                     
-                    // Sobota 12h
-                    if(dayW === 6 && type !== 'V') {
+                    // Sobotná 12h
+                    if(currDate.getDay() === 6 && type !== 'V') {
                         if(type === 'R') bg = "bg-sky-400 text-black";
                         label = "12";
                     }
 
-                    if(isH) { bg = "bg-red-600"; txt = "text-white"; label = "★"; }
-                    else if(isShut) { bg = "bg-red-50 shutdown-pattern text-red-700"; }
-
-                    h += `<div class="h-9 flex flex-col items-center justify-center rounded-xl border text-[11px] font-black ${bg} ${txt}">${d}<span class="text-[7px] leading-none mt-0.5">${(label === 'V' || isH) ? '' : label}</span></div>`;
+                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-xl border text-[11px] font-black ${bg} ${txt}">${d}<span class="text-[7px] mt-0.5">${label === 'V' ? '' : label}</span></div>`;
                 }
                 monthDiv.innerHTML = h + '</div></div>';
                 grid.appendChild(monthDiv);
@@ -101,7 +88,7 @@
         ['A','B','C','D'].forEach(t => {
             const b = document.createElement('button');
             b.innerText = t;
-            b.className = `w-10 h-10 rounded-xl font-black border-2 ${t === currentTeam ? 'bg-orange-500 border-orange-600 text-white shadow-lg scale-110' : 'bg-white border-slate-100 text-slate-400'}`;
+            b.className = `w-12 h-12 rounded-xl font-black border-2 transition-all ${t === currentTeam ? 'bg-orange-500 border-orange-600 text-white scale-110 shadow-md' : 'bg-white text-slate-400'}`;
             b.onclick = () => { currentTeam = t; render(); };
             document.getElementById('teamButtons').appendChild(b);
         });
