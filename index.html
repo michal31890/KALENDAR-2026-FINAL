@@ -1,123 +1,72 @@
 <!DOCTYPE html>
-<html lang=„sk“ skusiť=„nepreloži“ preloží=„nie“>
-hlavahlavahlava
-    <meta charset=„UTF-8“>
-    <meta názov=„výhľad“ obsah=„šírka=šírka zariadenia, počiatočná mierka=1,0, maximálna mierka=1,0, používateľská mierka=no“>
-    <názov>Continental 2026 - Finálna Verzia</názov>
-    <skript src=„https://cdn.tailwindcss.com„></skript>
-    <skript src=„https://unpkg.com/lucide@latest„></skript>
-    <štýl>
- @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
- telo {rodina písiem: 'Inter', bezpätkové; -webkit-tap-highlight-color: transparentný; }
- .vzor výputia {zadie-obrázok: opakujúci sa lineárne gradient(45deg, transparentný, transparentný 5px, rgba(239, 68, 68, 0,1) 5px, rgba(239, 68, 68, 0,1) 10px); }
- .denná maturita { farba: #000000 !doležitý; hmotnosť písma: 900 !doležitý; veľká písma: 1.1rem; }
- .nočná.denná maturita, .sviatok-bg .denná maturita { farba: #ffffff !doležitý; }
- .dni-skratky { farba: #000000 !doležitý; hmotnosť písma: 900 !doležitý; }
- .suma-hodin { farba pozadia: #000000 !doležitý; farba: #ffffff !doležitý; hmotnosť písma: 900 !doležitý; polomer hranice: 12px; }
-    </štýl>
-</hlava>
-<telo skusiť=„bg-slate-100 p-2 md:p-4 text-slate-900“>
-    <div skusiť=„max-w-[1600px] mx-auto“>
-        <hlavička skusiť=„bg-biela zaoblená-3xl tieň-sm zem hranica-bridlica-200 p-4 mb-6 text-centrum“>
-            <h1 skusiť=„text-3xl písmo-čierne veľké písmená kurzíva sánkovanie-tesnejší text-oranžová-600“>Kontinentálne 2026</h1>
-            <div id=„teamButtons“ skusiť=„flex spravedlniť-stred medzira-2 mt-4“></div>
-        </hlavička>
-
-        <div id=„kalendárGrid“ skusiť=„mriežka mriežka-stĺpce-1 md:grid-cols-2 lg:grid-cols-3 xl: mriežka-stĺpce-4 medzira-4 mb-6“></div>
-
-        <päta skusiť=„bg-biela zaoblená-3xl zem hranica-bridlica-200 p-6 mriežka mriežka-stĺpce-2 md: mriežka-stĺpce-5 medzira-3 text-stred text-[10px] písmo-čierne veľké písmo“>
-            <div skusiť=„bg-[#FFD700] p-3 zaoblené-xl zem hranica-žltá-600 tieň-sm“>Ranná</div>
-            <div skusiť=„bg-[#FF8C00] p-3 zaoblený-xl text-biely tieň-sm“>Poobedná</div>
-            <div skusiť=„bg-[#483D8B] p-3 zaoblený-xl text-biely tieň-sm“>Nočná</div>
-            <div skusiť=„bg-červená-600 p-3 zaoblený-xl text-biely tieň-sm“>Sviatok 🚩</div>
-            <div skusiť=„bg-green-600 p-3 zaoblený-xl text-biely tieň-sm“>Výplata 💶</div>
-        </päta>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Continental 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .holiday-bg { background-color: #dc2626 !important; }
+    </style>
+</head>
+<body class="bg-slate-100 p-2">
+    <div class="max-w-[1600px] mx-auto">
+        <header class="bg-white rounded-3xl shadow-sm p-4 mb-6 text-center">
+            <h1 class="text-3xl font-black italic text-orange-600">Kontinentálne 2026</h1>
+            <div id="teamButtons" class="flex justify-center gap-2 mt-4"></div>
+        </header>
+        <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6"></div>
     </div>
-
-    <skript>
- nechať aktuálny tím = 'C';
- const mesiace = ['Január','Február','Marec','Apríl','Máj','Jún','Júl','august',„september“,„Október“,„november“,'december'];
- const vysoké dni = {0:9, 1:6, 2:6, 3:9, 4:8, 5:5, 6:7, 7:7, 8:7, 9:7, 10:6, 11:7};
-        
- //OPRAVENÉ SVIATKY: MonthIndex-Day (0-jan, 4-maj, 5-jún, 7-aug, 10-nov)
- const prázdniny = [„0-1“, „0-6“, „3-3“, „3-6“, „4-1“, „5-5“, „7-29“, „10-1“, „11-24“, „11-25“, „11-26“];
-
- const vzor = ['R','R','R','R', 'N', 'V', 'R', 'R', 'R', 'R', 'R', 'N','R', 'N','R', 'N','R', 'V', 'V', 'P','P','V','V'];
-
- funkcia getShift (dátum, tím) {
- const refDate = nový Dátum (2026, 1, 2); 
- const diffDays = Matematika.okrúhly((dátum - refDate)/86400000);
- const kompenzácia = { 'C': 0, 'A': 7, 'B': 14, 'D': 21 };
- const idx = ((diffDays + compenzácia[tím]) % 28 + 28) % 28;
- návrat vzor[idx] === 'V' ? '' : vzor[idx];
+    <script>
+        const refDate = new Date(2026, 0, 1);
+        let currentTeam = 'C';
+        const months = ['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December'];
+        const shifts = ['R', 'R', 'R', 'R', 'N', 'V', 'R', 'R', 'R', 'R', 'N', 'N', 'R', 'V', 'R', 'V', 'V', 'P', 'P', 'V', 'V'];
+        function getShift(date, team) {
+            const diffDays = Math.floor((date - refDate) / 86400000);
+            const offsets = { 'C': 0, 'A': 7, 'B': 14, 'D': 21 };
+            const idx = ((diffDays + offsets[team]) % 28 + 28) % 28;
+            return shifts[idx] === 'V' ? '' : shifts[idx];
         }
-
- funkcia isShut (d, m) {
- ak (m === 0 && d <= 6) vratiť pravdu;
- ak (m === 3 a d >= 3 a d <= 6) vratiť pravdu;
- if (m === 6 && d >= 20 && d <= 26) vratiť pravdu;
- ak (m === 11 && d >= 22) vrati hodnotu pravda;
- vrátíť false;
-        }
-
- funkcia výstup() {
- const grid = document.getElementById('calendarGrid');
- mriežka.innerHTML = '';
- mesiace.pre každého((názov, mIdx) => {
- nechať hodiny = 0;
- const karta = dokument.createElement ('div');
- karta.triedaName = „bg-biela p-4 zaoblená-[2,5rem] tieň-sm hranica hranica-bridlica-200“;
- nechať h =`<div skusiť=“flex resustice-medzi položky-centrum mb-4 px-2“><h2 skusiť=“písmo-čierna text-bridlica-800 veľké kurzíva text-sm“>${názov}</h2><div skusiť=“bg-slate-100 px-3 py-1 zaokrúhlený-plný text-[9px] font-black h-sum“></div></div><div class=“grid grid-cols-7 gap-1 dni-skratky text-[10px] text-center mb-2 veľké písmeno“><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div>Takže</div><div>Ne</div></div><div class=“grid grid-cols-7 gap-1“>`;
- const prvý = nový Dátum (2026, mIdx, 1);
- pre(nechať i=1; i<(prvý.getDay()||7); i++) h += '<div></div>';
- pre(nechať d=1; d<=nový Dátum (2026, mIdx+1, 0).getDate(); d++) {
- const dátum = nový Dátum (2026, mIdx, d);
- const posun = getShift (dátum, aktuálne tiem);
- const isHoliday = prázdniny.zahŕňa(`${mIdx}-${d}`);
- const isPay = (d === vysoké dni [mIdx]);
- const isShutdown = isShut(d, mIdx);
-
-hlavička
-</
-html
- ak(posun==='P') bg = „bg-[#FF8C00]“;
- ak(posun==='N') bg = „bg-[#483D8B] nočná“;
-div
-</
-                    neťať holidayClass = „“;
- ak(isHoliday) { 
- bg = „bg-red-600 svatok-bg“; 
- holidayClass = „ring-2 ring-red-400“;
- } iný ak(isPay) {
- bg = „bg-green-600“;
-                    }
-
- h +=`<div skusiť=“h-10 flex flex-col položky-centrum centrum popis zaoblené-xl relativny ${bg} ${holidayClass} ${isShutdown &&!isHoliday &&!isPay ? 'shutdown-pattern border-2 border-red-500': ''}“>
- <splach skusiť=“deň-num“>${d}</splach>
- <splach skusiť=“text-[8px] písmo-čierne veľké písmo ${posun==='N'||isHoliday||isPay?„textovo biela“:'text-black'}„>${isHoliday? '🚩' : (isPay &&!smena (smena)? '€': shift)}</span>
- </div>`;
+        function render() {
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            months.forEach((monthName, mIdx) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-2xl shadow-sm border border-slate-200';
+                let h = `<h2 class="text-xl font-black mb-4 italic text-slate-800">${monthName}</h2><div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 mb-2"><div>PO</div><div>UT</div><div>ST</div><div>ŠT</div><div>PI</div><div>SO</div><div>NE</div></div><div class="grid grid-cols-7 gap-1">`;
+                const firstDay = new Date(2026, mIdx, 1);
+                for(let i=1; i<(firstDay.getDay() || 7); i++) h += `<div></div>`;
+                for(let d=1; d<=new Date(2026, mIdx+1, 0).getDate(); d++) {
+                    const date = new Date(2026, mIdx, d);
+                    const shift = getShift(date, currentTeam);
+                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-xl bg-slate-50 relative">
+                        <span class="text-xs text-slate-400">${d}</span>
+                        <span class="text-[10px] font-black">${shift}</span>
+                    </div>`;
                 }
- h += `</div><div skusiť=“mt-4 suma-hodin py-2 textového mid kurzíva text-lg veľké písmená“>${hodiny} HODÍN</div>`;
- karta.innerHTML = h; mriežka.appendChild (karta);
- });
- const diffDays = Matematika.okrúhly((dátum - refDate)/86400000);
+                h += `</div>`;
+                card.innerHTML = h;
+                grid.appendChild(card);
+            });
         }
-
- const kontajner = dokument.getElementById(„teamButtons“);
- ['A','D','C','B'].pre každého(t => {
- const b = dokument.createElement ('tlačidlo');
- b.vnútorný text = t;
- b.triedaName = `w-12 h-12 rounded-xl font-black text-xl transition-all ` + (t === aktuálny tím (aktuálny))? „bg-oranžová-500 text-biely tieň-md“: „bg-biely text-slate-400 hranica hranica-slate-200“);
- b.na kliknutie = () => {aktuálny tenim = t; výkresy(); aktualizáciaBtn(); };
- kontajner.appendChild(b);
- });
- funkcia aktualizáciaBtn() {
- dokument.querySelectorAll('#teamButtons tlačidlo').pre každého(el => {
- const aktivny = el.vnútorný text === aktuálny tich;
- el.triedaName = `w-12 h-12 rounded-xl font-black text-xl transition-all ` + (aktívny (aktívny)? „bg-oranžová-500 text-biely tieň-md“: „bg-biely text-slate-400 hranica hranica-slate-200“);
- });
+        const container = document.getElementById('teamButtons');
+        ['A', 'D', 'C', 'B'].forEach(t => {
+            const b = document.createElement('button');
+            b.innerText = t;
+            b.className = `w-12 h-12 rounded-xl font-black text-xl border ${t === currentTeam ? 'bg-orange-500 text-white' : 'bg-white text-slate-400'}`;
+            b.onclick = () => { currentTeam = t; render(); updateBtn(); };
+            container.appendChild(b);
+        });
+        function updateBtn() {
+            document.querySelectorAll('#teamButtons button').forEach(el => {
+                const active = el.innerText === currentTeam;
+                el.className = `w-12 h-12 rounded-xl font-black text-xl border ${active ? 'bg-orange-500 text-white shadow-lg' : 'bg-white text-slate-400'}`;
+            });
         }
- výkresliť();
- </skript>
-</telo>
+        render();
+    </script>
+</body>
 </html>
