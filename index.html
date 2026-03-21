@@ -3,27 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - FULL HOURS</title>
+    <title>Continental 2026 - Pevný Fond</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .shutdown { 
-            background-color: #fee2e2 !important; 
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.05) 5px, rgba(239, 68, 68, 0.05) 10px) !important;
-        }
     </style>
 </head>
 <body>
 
     <div class="max-w-6xl mx-auto min-h-screen flex flex-col">
         <div class="p-4 bg-white shadow-sm border-b sticky top-0 z-50 flex justify-between items-center">
-            <div class="flex flex-col">
-                <h1 class="font-black text-xl italic uppercase tracking-tighter text-slate-800 leading-none">
-                    Continental <span class="text-orange-500">2026</span>
-                </h1>
-                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Vrátane sviatkov</span>
-            </div>
+            <h1 class="font-black text-xl italic uppercase tracking-tighter text-slate-800 leading-none">
+                Continental <span class="text-orange-500">2026</span>
+            </h1>
             <div class="flex gap-1" id="teamButtons"></div>
         </div>
 
@@ -33,7 +26,7 @@
     <script>
         let currentTeam = 'C';
 
-        // Tvoje presné dáta fondov pre všetky zmeny
+        // PRESNE TIETO ČÍSLA SA ZOBRAZIA (BEZ PRERÁTAVANIA)
         const fpcData = {
             A: [157, 150, 165, 165, 157, 165, 172, 168, 150, 168, 165, 161],
             B: [176, 150, 157, 150, 176, 165, 157, 157, 165, 165, 157, 172],
@@ -67,8 +60,8 @@
                 let h = `
                     <div class="bg-slate-900 text-white px-4 py-2.5 flex justify-between items-center border-b border-slate-800">
                         <span class="font-black text-[11px] uppercase tracking-wider">${m.n}</span>
-                        <span class="bg-orange-500 text-slate-900 text-[10px] px-2.5 py-0.5 rounded-full font-black italic shadow-sm">
-                            ${currentFPC.toFixed(1)} h
+                        <span class="bg-orange-500 text-slate-900 text-[10px] px-2.5 py-0.5 rounded-full font-black shadow-sm italic">
+                            ${currentFPC} h
                         </span>
                     </div>
                     <div class="p-3 grid grid-cols-7 gap-1">
@@ -84,7 +77,6 @@
                     
                     let type = cycle[idx];
                     let isH = holidays.includes(`${mIdx}-${d}`);
-                    let isS = (mIdx === 6 && d >= 20 && d <= 26) || (mIdx === 11 && d >= 21) || (mIdx === 3 && d >= 3 && d <= 6);
                     
                     let bg = "bg-slate-50", txt = "text-slate-900", label = type;
 
@@ -92,18 +84,12 @@
                     if(type === 'P') { bg = "bg-[#FF8C00]"; txt = "text-white"; }
                     if(type === 'N') { bg = "bg-[#483D8B]"; txt = "text-white"; }
                     
-                    // Soboty 12h
                     if(dayW === 6 && (type === 'R' || type === 'N')) {
                         bg = "bg-sky-400"; txt = "text-slate-900"; label = "12";
                     }
 
-                    // ŠPECIÁLNA ÚPRAVA: Sviatky teraz normálne zobrazujú smenu, len pridáme hviezdičku
                     let labelFinal = label === 'V' ? '' : label;
-                    if(isH) {
-                        // Ak je sviatok a máš smenu, necháme farbu smeny a pridáme hviezdičku
-                        labelFinal = labelFinal + "★";
-                    }
-                    if(isS) { bg = "shutdown text-red-700 opacity-60"; }
+                    if(isH) { labelFinal += "★"; }
 
                     h += `
                         <div class="h-9 flex flex-col items-center justify-center rounded-xl border border-slate-100 text-[11px] font-black ${bg} ${txt} shadow-sm">
