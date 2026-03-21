@@ -3,48 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - FINAL COMPLETE</title>
+    <title>Continental 2026 - VÝRAZNÝ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .shutdown-pattern { 
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.15) 5px, rgba(239, 68, 68, 0.15) 10px); 
+        /* EXTRA VÝRAZNÁ ODSTÁVKA */
+        .shutdown-active { 
+            background-color: #fecaca !important; /* svetlo červená plocha */
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 7px, rgba(220, 38, 38, 0.4) 7px, rgba(220, 38, 38, 0.4) 14px) !important;
+            border: 2px solid #dc2626 !important;
         }
     </style>
 </head>
-<body class="bg-slate-100">
+<body class="bg-slate-200">
     <div class="max-w-6xl mx-auto min-h-screen flex flex-col">
-        <div class="p-4 bg-white shadow-md border-b sticky top-0 z-50 print-hidden">
+        <div class="p-4 bg-white shadow-lg border-b-4 border-orange-500 sticky top-0 z-50 print-hidden">
             <div class="flex justify-between items-center mb-4">
                 <h1 class="font-black text-2xl italic uppercase tracking-tighter text-slate-800">Continental <span class="text-orange-500 text-3xl">2026</span></h1>
-                <div class="bg-slate-900 text-white px-4 py-1 rounded-full text-xs font-black uppercase">Zmena <span id="activeTeamLabel" class="text-orange-500">C</span></div>
+                <div class="bg-slate-900 text-white px-6 py-2 rounded-full text-sm font-black uppercase">Zmena <span id="activeTeamLabel" class="text-orange-500 text-xl">C</span></div>
             </div>
             <div class="flex gap-2 overflow-x-auto pb-1" id="teamButtons"></div>
         </div>
 
-        <div class="bg-white flex-grow shadow-xl">
-            <div class="p-8 border-b-8 border-orange-500 bg-slate-50 text-center relative overflow-hidden">
-                <div class="absolute -right-4 -top-8 text-9xl font-black text-slate-200/40 italic">2026</div>
-                <h2 class="text-4xl font-black text-slate-900 uppercase italic relative z-10">ZMENA <span id="posterTeamLabel" class="text-orange-500">C</span></h2>
-                <p class="text-slate-500 font-bold uppercase tracking-widest text-xs mt-2 relative z-10 italic">Kompletný plán: 12h smeny + Letná odstávka</p>
-            </div>
+        <div class="bg-white flex-grow shadow-2xl">
+            <div id="calendarGrid" class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 
-            <div id="calendarGrid" class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
-
-            <div class="p-8 bg-slate-900 text-white mt-10 rounded-t-3xl shadow-2xl">
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-6 text-[10px] font-black uppercase tracking-wider text-center">
-                    <div class="flex flex-col items-center gap-2"><div class="w-10 h-10 rounded-xl bg-[#FFD700] text-black flex items-center justify-center shadow-lg border-2 border-white/10">R</div>Ranná 8h</div>
-                    <div class="flex flex-col items-center gap-2"><div class="w-10 h-10 rounded-xl bg-[#FF8C00] text-white flex items-center justify-center shadow-lg border-2 border-white/10">P</div>Poob. 8h</div>
-                    <div class="flex flex-col items-center gap-2"><div class="w-10 h-10 rounded-xl bg-[#483D8B] text-white flex items-center justify-center shadow-lg border-2 border-white/10">N</div>Nočná 8h</div>
-                    <div class="flex flex-col items-center gap-2"><div class="w-10 h-10 rounded-xl bg-sky-400 text-black flex items-center justify-center shadow-lg border-2 border-white/10 font-black">12</div>12h Smena</div>
-                    <div class="flex flex-col items-center gap-2"><div class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-lg border-2 border-white/10 font-black">★</div>Sviatok</div>
-                </div>
-                <div class="mt-8 pt-4 border-t border-slate-800 text-center flex flex-col items-center gap-4">
-                    <div class="flex items-center gap-4 text-[10px] text-slate-400 font-bold uppercase italic tracking-widest">
-                        <span class="flex items-center gap-2"><div class="w-4 h-4 rounded border border-slate-700 shutdown-pattern"></div> Letná odstávka (Júl/Aug)</span>
-                    </div>
-                    <button onclick="window.print()" class="px-10 py-4 bg-orange-600 hover:bg-orange-500 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-lg active:scale-95 print-hidden">Vytlačiť plán A4</button>
+            <div class="p-8 bg-slate-900 text-white mt-10">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-6 text-[11px] font-black uppercase tracking-wider text-center">
+                    <div class="flex flex-col items-center gap-2"><div class="w-12 h-12 rounded-xl bg-[#FFD700] text-black flex items-center justify-center shadow-lg border-2 border-white/20">R</div>Ranná 8h</div>
+                    <div class="flex flex-col items-center gap-2"><div class="w-12 h-12 rounded-xl bg-[#FF8C00] text-white flex items-center justify-center shadow-lg border-2 border-white/20">P</div>Poob. 8h</div>
+                    <div class="flex flex-col items-center gap-2"><div class="w-12 h-12 rounded-xl bg-[#483D8B] text-white flex items-center justify-center shadow-lg border-2 border-white/20">N</div>Nočná 8h</div>
+                    <div class="flex flex-col items-center gap-2"><div class="w-12 h-12 rounded-xl bg-cyan-400 text-black flex items-center justify-center shadow-lg border-2 border-black font-black text-lg text-black">12</div>12h SMENA</div>
+                    <div class="flex flex-col items-center gap-2"><div class="w-12 h-12 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-lg border-2 border-white/20">★</div>Sviatok</div>
                 </div>
             </div>
         </div>
@@ -52,6 +43,7 @@
 
     <script>
         let currentTeam = 'C';
+        // DEFINÍCIA CYKLU S 12h SMENAMI
         const cycle = [
             {t:'R',h:8},{t:'R',h:8},{t:'R',h:8},{t:'R',h:12},{t:'N',h:8},{t:'N',h:12},{t:'N',h:8},
             {t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'R',h:8},{t:'R',h:8},{t:'R',h:8},
@@ -68,7 +60,6 @@
 
         function render() {
             document.getElementById('activeTeamLabel').innerText = currentTeam;
-            document.getElementById('posterTeamLabel').innerText = currentTeam;
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
             const startDate = new Date(2026, 0, 5);
@@ -76,8 +67,8 @@
             months.forEach((m, mIdx) => {
                 let totalH = 0;
                 const monthDiv = document.createElement('div');
-                monthDiv.className = "bg-white border-2 border-slate-50 rounded-2xl overflow-hidden shadow-sm";
-                let h = `<div class="bg-slate-900 px-3 py-2 flex justify-between items-center"><h3 class="font-black uppercase text-[10px] text-white italic tracking-widest">${m.n}</h3><span class="bg-orange-500 text-black text-[9px] px-2 py-0.5 rounded font-black" id="h-${mIdx}">0H</span></div><div class="p-2"><div class="grid grid-cols-7 gap-1 text-[8px] font-black text-slate-400 text-center uppercase mb-2"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div class="text-orange-400">So</div><div class="text-orange-400">Ne</div></div><div class="grid grid-cols-7 gap-1">`;
+                monthDiv.className = "bg-white border-4 border-slate-100 rounded-3xl overflow-hidden shadow-md";
+                let h = `<div class="bg-slate-900 px-4 py-3 flex justify-between items-center"><h3 class="font-black uppercase text-xs text-white italic tracking-tighter">${m.n}</h3><span class="bg-orange-500 text-black text-xs px-2 py-0.5 rounded font-black" id="h-${mIdx}">0H</span></div><div class="p-2"><div class="grid grid-cols-7 gap-1 text-[9px] font-black text-slate-400 text-center uppercase mb-2"><div>Po</div><div>Ut</div><div>St</div><div>Št</div><div>Pi</div><div class="text-orange-500">So</div><div class="text-orange-500">Ne</div></div><div class="grid grid-cols-7 gap-1">`;
                 
                 for(let i=0; i<m.s; i++) h += '<div></div>';
                 for(let d=1; d<=m.d; d++) {
@@ -86,24 +77,30 @@
                     let idx = ((diff + teamOffsets[currentTeam]) % 28 + 28) % 28;
                     const shift = cycle[idx];
                     
-                    let bg = "bg-slate-50", txt = "text-slate-900", label = shift.t;
+                    let bg = "bg-slate-100", txt = "text-slate-900", label = shift.t, border = "border-transparent";
 
                     if(shift.t === 'R') bg = "bg-[#FFD700]";
                     else if(shift.t === 'P') { bg = "bg-[#FF8C00]"; txt = "text-white"; }
                     else if(shift.t === 'N') { bg = "bg-[#483D8B]"; txt = "text-white"; }
                     
-                    if(shift.h > 8) { bg = "bg-sky-400"; txt = "text-black"; label = "12"; }
+                    // EXTRA VÝRAZNÁ 12H SMENA
+                    if(shift.h > 8) { 
+                        bg = "bg-cyan-400"; 
+                        txt = "text-black font-black"; 
+                        label = "12h";
+                        border = "border-2 border-black";
+                    }
                     
-                    // ODSTÁVKY (Apríl 3-6, Júl 20-31, August 1-2, December 19-31)
+                    // EXTRA VÝRAZNÁ ODSTÁVKA
                     const isShut = (mIdx === 3 && d >= 3 && d <= 6) || 
                                    (mIdx === 6 && d >= 20 && d <= 31) || 
                                    (mIdx === 7 && d >= 1 && d <= 2) || 
                                    (mIdx === 11 && d >= 19 && d <= 31);
 
-                    if(isShut) bg += " shutdown-pattern ring-1 ring-red-200";
+                    if(isShut) bg = "shutdown-active";
                     if(holidays.includes(`${mIdx}-${d}`)) { bg = "bg-red-600"; txt = "text-white"; label = "★"; }
                     
-                    h += `<div class="h-9 flex flex-col items-center justify-center rounded-lg ${bg} ${txt} text-[10px] font-black border border-black/5 shadow-sm">${d}<span class="text-[7px] font-bold mt-0.5">${label !== 'V' ? label : ''}</span></div>`;
+                    h += `<div class="h-11 flex flex-col items-center justify-center rounded-xl ${bg} ${txt} ${border} text-[11px] font-black shadow-sm relative">${d}<span class="text-[8px] uppercase tracking-tighter">${label !== 'V' ? label : ''}</span></div>`;
                     if(!holidays.includes(`${mIdx}-${d}`)) totalH += shift.h;
                 }
                 monthDiv.innerHTML = h + '</div></div>';
@@ -116,7 +113,7 @@
         ['A','B','C','D'].forEach(t => {
             const b = document.createElement('button');
             b.innerText = t;
-            b.className = `flex-1 py-3 rounded-xl font-black text-sm transition-all shadow-sm ${t === currentTeam ? 'bg-orange-500 text-white scale-105' : 'bg-white text-slate-400 border border-slate-100'}`;
+            b.className = `flex-1 py-4 rounded-2xl font-black text-lg transition-all ${t === currentTeam ? 'bg-orange-500 text-white shadow-xl scale-105' : 'bg-white text-slate-400 border-2'}`;
             b.onclick = () => { currentTeam = t; render(); updateBtns(); };
             btnCont.appendChild(b);
         });
@@ -124,7 +121,7 @@
         function updateBtns() {
             document.querySelectorAll('#teamButtons button').forEach(b => {
                 const isActive = b.innerText === currentTeam;
-                b.className = `flex-1 py-3 rounded-xl font-black text-sm transition-all shadow-sm ${isActive ? 'bg-orange-500 text-white scale-105' : 'bg-white text-slate-400 border border-slate-100'}`;
+                b.className = `flex-1 py-4 rounded-2xl font-black text-lg transition-all ${isActive ? 'bg-orange-500 text-white shadow-xl scale-105' : 'bg-white text-slate-400 border-2'}`;
             });
         }
         render();
