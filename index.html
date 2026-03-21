@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - So 12h / Ne 8h</title>
+    <title>Continental 2026 - Posun o 1 deň</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -43,17 +43,18 @@
         const payDays = { 0: 9, 1: 6, 2: 6, 3: 9, 4: 8, 5: 5, 6: 7, 7: 7, 8: 7, 9: 7, 10: 6, 11: 7 };
         
         const cycle = [
-            'R','R','R','R', // Pon-Štv
-            'N','N','N',      // Pia-Ned
-            'V','V','V','V', // Pon-Štv
-            'R','R','R',      // Pia-Ned
-            'N','N','N','N', // Pon-Štv
-            'V','V','V',      // Pia-Ned
-            'P','P','P','P','P', // Pon-Pia
-            'V','V'           // So-Ne
+            'R','R','R','R', // Pondelok - Štvrtok
+            'N','N','N',      // Piatok - Nedeľa
+            'V','V','V','V', // Pondelok - Štvrtok
+            'R','R','R',      // Piatok - Nedeľa
+            'N','N','N','N', // Pondelok - Štvrtok
+            'V','V','V',      // Piatok - Nedeľa
+            'P','P','P','P','P', // Pondelok - Piatok
+            'V','V'           // Sobota - Nedeľa
         ];
 
-        const teamOffsets = { A: 14, B: 7, C: 0, D: 21 };
+        // UPRAVENÝ OFFSET PRE C (POSUNUTÉ O 1 DEŇ)
+        const teamOffsets = { A: 13, B: 6, C: 27, D: 20 };
 
         const months = [
             { n: "Január", d: 31, s: 3 }, { n: "Február", d: 28, s: 6 }, { n: "Marec", d: 31, s: 6 },
@@ -67,7 +68,7 @@
         function render() {
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
-            const refDate = new Date(2026, 0, 5); // Pondelok 5.1.
+            const refDate = new Date(2026, 0, 5); // Referenčný bod
 
             months.forEach((m, mIdx) => {
                 const monthDiv = document.createElement('div');
@@ -95,13 +96,11 @@
                     if(type === 'P') { bg = "bg-[#FF8C00]"; txt = "text-white"; }
                     if(type === 'N') { bg = "bg-[#483D8B]"; txt = "text-white"; }
                     
-                    // ŠPECIÁLNA PODMIENKA PRE VÍKENDY
                     if(type === 'R' || type === 'N' || type === 'P') {
-                        if(dayW === 6) { // SOBOTA = 12h
+                        if(dayW === 6) { 
                             if(type === 'R') { bg = "bg-sky-400"; txt = "text-slate-900"; }
                             label = "12";
                         }
-                        // Nedeľa (dayW === 0) zostáva label = type (teda R, N alebo P), čo je 8h
                     }
 
                     let labelFinal = label === 'V' ? '' : label;
