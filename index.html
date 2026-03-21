@@ -3,16 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - Fondy a Sviatky</title>
+    <title>Continental 2026 - Fondy & Výplaty</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        /* Štýl pre odstávku */
         .shutdown { 
             background-color: #fee2e2 !important; 
             background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.1) 5px, rgba(239, 68, 68, 0.1) 10px) !important;
             color: #b91c1c !important;
+        }
+        .payday {
+            position: relative;
+        }
+        .payday::after {
+            content: 'S';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background-color: #22c55e;
+            color: white;
+            font-size: 8px;
+            width: 12px;
+            height: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid white;
+            font-weight: 900;
         }
     </style>
 </head>
@@ -20,9 +39,12 @@
 
     <div class="max-w-6xl mx-auto min-h-screen flex flex-col">
         <div class="p-4 bg-white shadow-sm border-b sticky top-0 z-50 flex justify-between items-center">
-            <h1 class="font-black text-xl italic uppercase tracking-tighter text-slate-800 leading-none">
-                Continental <span class="text-orange-500">2026</span>
-            </h1>
+            <div class="flex flex-col">
+                <h1 class="font-black text-xl italic uppercase tracking-tighter text-slate-800 leading-none">
+                    Continental <span class="text-orange-500">2026</span>
+                </h1>
+                <span class="text-[8px] font-bold text-green-600 uppercase tracking-widest mt-1">S = Výplatný termín</span>
+            </div>
             <div class="flex gap-1" id="teamButtons"></div>
         </div>
 
@@ -32,12 +54,18 @@
     <script>
         let currentTeam = 'C';
 
-        // TVOJE ČÍSLA (BEZ PRERÁTAVANIA)
+        // TVOJE ČÍSLA HODÍN
         const fpcData = {
             A: [157, 150, 165, 165, 157, 165, 172, 168, 150, 168, 165, 161],
             B: [176, 150, 157, 150, 176, 165, 157, 157, 165, 165, 157, 172],
             C: [165, 150, 165, 165, 176, 150, 150, 176, 165, 157, 157, 157],
             D: [168, 150, 172, 165, 176, 150, 165, 157, 165, 157, 157, 150]
+        };
+
+        // VÝPLATNÉ TERMÍNY (Mesiac: Deň)
+        const payDays = {
+            0: 9, 1: 6, 2: 6, 3: 9, 4: 8, 5: 5, 
+            6: 7, 7: 7, 8: 7, 9: 7, 10: 6, 11: 7
         };
         
         const cycle = ['R','R','R','N','N','N','N','V','V','V','P','P','P','P','P','V','V','R','R','R','R','N','N','N','V','V','V','V'];
@@ -53,9 +81,9 @@
         const holidays = ["0-1", "0-6", "3-3", "3-6", "4-1", "4-8", "6-5", "7-29", "8-1", "8-15", "10-1", "10-17", "11-24", "11-25", "11-26"];
 
         function isShutdown(m, d) {
-            if (m === 3 && d >= 3 && d <= 6) return true; // Veľká noc
-            if (m === 6 && d >= 20 && d <= 26) return true; // Letná
-            if (m === 11 && d >= 21) return true; // Zimná
+            if (m === 3 && d >= 3 && d <= 6) return true;
+            if (m === 6 && d >= 20 && d <= 26) return true;
+            if (m === 11 && d >= 21) return true;
             return false;
         }
 
@@ -91,6 +119,7 @@
                     let type = cycle[idx];
                     let isH = holidays.includes(`${mIdx}-${d}`);
                     let isS = isShutdown(mIdx, d);
+                    let isPay = (payDays[mIdx] === d);
                     
                     let bg = "bg-slate-50", txt = "text-slate-900", label = type;
 
@@ -104,12 +133,11 @@
 
                     let labelFinal = label === 'V' ? '' : label;
 
-                    // PRIORITA ZOBRAZENIA:
-                    if(isS) { bg = "shutdown"; labelFinal = "O"; } // Odstávka má prednosť v pozadí
-                    if(isH) { bg = "bg-red-600"; txt = "text-white"; labelFinal = "★"; } // Sviatok je červený
+                    if(isS) { bg = "shutdown"; labelFinal = "O"; }
+                    if(isH) { bg = "bg-red-600"; txt = "text-white"; labelFinal = "★"; }
 
                     h += `
-                        <div class="h-9 flex flex-col items-center justify-center rounded-xl border border-slate-100 text-[11px] font-black ${bg} ${txt} shadow-sm">
+                        <div class="h-9 flex flex-col items-center justify-center rounded-xl border border-slate-100 text-[11px] font-black ${bg} ${txt} shadow-sm ${isPay ? 'payday' : ''}">
                             ${d}<span class="text-[7px] leading-none mt-0.5">${labelFinal}</span>
                         </div>
                     `;
@@ -122,7 +150,7 @@
         ['A','B','C','D'].forEach(t => {
             const b = document.createElement('button');
             b.innerText = t;
-            b.className = `w-9 h-9 rounded-xl font-black border-2 transition-all shadow-sm ${t === currentTeam ? 'bg-orange-500 border-orange-600 text-white' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'}`;
+            b.className = `w-9 h-9 rounded-xl font-black border-2 transition-all shadow-sm ${t === currentTeam ? 'bg-orange-500 border-orange-600 text-white' : 'bg-white border-slate-100 text-slate-400'}`;
             b.onclick = () => { 
                 currentTeam = t; 
                 document.querySelectorAll('#teamButtons button').forEach(btn => btn.className = 'w-9 h-9 rounded-xl font-black border-2 bg-white border-slate-100 text-slate-400 hover:bg-slate-50 shadow-sm');
