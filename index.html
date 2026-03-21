@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Continental 2026</title>
+    <title>Continental 2026 - Final</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -14,7 +14,7 @@
 <body class="bg-slate-100 p-4">
     <div class="max-w-7xl mx-auto">
         <header class="bg-white p-6 rounded-3xl shadow-sm mb-6 text-center border-b-4 border-orange-500">
-            <h1 class="text-3xl font-black italic uppercase text-slate-800">Kontinentálne <span class="text-orange-600">2026</span></h1>
+            <h1 class="text-3xl font-black italic uppercase text-slate-800">Continental <span class="text-orange-600">2026</span></h1>
             <div id="teamButtons" class="flex justify-center gap-2 mt-4"></div>
         </header>
         <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
@@ -45,7 +45,7 @@
                 let totalH = 0;
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-2xl shadow-sm border border-slate-200";
-                let h = `<div class="flex justify-between items-center mb-4"><h3 class="font-black uppercase italic">${m.n}</h3><span class="bg-slate-900 text-white text-[10px] px-2 py-1 rounded-lg" id="hours-${mIdx}">0 HODÍN</span></div><div class="grid grid-cols-7 gap-1 text-[10px] font-bold text-slate-400 text-center mb-2"><div>PO</div><div>UT</div><div>ST</div><div>ŠT</div><div>PI</div><div class="text-orange-500">SO</div><div class="text-orange-500">NE</div></div><div class="grid grid-cols-7 gap-1">`;
+                let h = `<div class="flex justify-between items-center mb-4"><h3 class="font-black uppercase italic">${m.n}</h3><span class="bg-slate-900 text-white text-[10px] px-2 py-1 rounded-lg" id="hours-${mIdx}">0 H</span></div><div class="grid grid-cols-7 gap-1 text-[10px] font-bold text-slate-400 text-center mb-2"><div>PO</div><div>UT</div><div>ST</div><div>ŠT</div><div>PI</div><div class="text-orange-500">SO</div><div class="text-orange-500">NE</div></div><div class="grid grid-cols-7 gap-1">`;
                 
                 for(let i=0; i<m.s; i++) h += '<div></div>';
                 for(let d=1; d<=m.d; d++) {
@@ -55,12 +55,14 @@
                     const shift = cycle[idx];
                     let bg = "bg-slate-50";
                     let txt = "text-slate-900";
-                    if(shift.t === 'R') { bg = "bg-yellow-400"; }
+                    
+                    if(shift.t === 'R') bg = "bg-yellow-400";
                     else if(shift.t === 'P') { bg = "bg-orange-500"; txt = "text-white"; }
                     else if(shift.t === 'N') { bg = "bg-indigo-900"; txt = "text-white"; }
+                    
                     if(holidays.includes(`${mIdx}-${d}`)) { bg = "bg-red-600"; txt = "text-white"; }
                     
-                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-lg ${bg} ${txt} text-[10px] font-bold border border-black/5 shadow-sm">${d}<span>${shift.t !== 'V' ? shift.t : ''}</span></div>`;
+                    h += `<div class="h-10 flex flex-col items-center justify-center rounded-lg ${bg} ${txt} text-[10px] font-bold border border-black/5">${d}<span>${shift.t !== 'V' ? shift.t : ''}</span></div>`;
                     if(!holidays.includes(`${mIdx}-${d}`)) totalH += shift.h;
                 }
                 card.innerHTML = h + '</div>';
@@ -80,7 +82,8 @@
 
         function updateBtns() {
             document.querySelectorAll('#teamButtons button').forEach(b => {
-                b.className = `w-12 h-12 rounded-xl font-black transition-all ${b.innerText === currentTeam ? 'bg-orange-500 text-white shadow-lg' : 'bg-white text-slate-400 border'}`;
+                const isActive = b.innerText === currentTeam;
+                b.className = `w-12 h-12 rounded-xl font-black transition-all ${isActive ? 'bg-orange-500 text-white shadow-lg' : 'bg-white text-slate-400 border'}`;
             });
         }
         render();
