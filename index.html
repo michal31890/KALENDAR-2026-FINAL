@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - FIX FINAL</title>
+    <title>Continental 2026 - FIX 10.4. Ranná</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -15,7 +15,7 @@
 
     <div class="max-w-6xl mx-auto min-h-screen flex flex-col">
         <div class="p-4 bg-white shadow-sm border-b sticky top-0 z-50 flex justify-between items-center">
-            <h1 class="font-black text-xl italic uppercase tracking-tighter">Continental <span class="text-orange-500">2026</span></h1>
+            <h1 class="font-black text-xl italic uppercase tracking-tighter text-slate-800">Continental <span class="text-orange-500">2026</span></h1>
             <div id="teamButtons" class="flex gap-1"></div>
         </div>
 
@@ -28,24 +28,20 @@
     <script>
         let currentTeam = 'C';
 
-        // Fixný 28-dňový cyklus:
-        // Index 0-3: R,R,R,R (Pon-Štv)
-        // Index 4-6: N,N,N (Pia-Ned)
-        // Index 7-10: V,V,V,V (Pon-Štv)
-        // Index 11-13: R,R,R (Pia-Ned) <- SEM MUSÍ PADNÚŤ 10. APRÍL
+        // 28-dňový cyklus Continental (4-3-4-3-4-3-5-2)
         const cycle = [
-            'R','R','R','R', 
-            'N','N','N',      
-            'V','V','V','V', 
-            'R','R','R',      
-            'N','N','N','N', 
-            'V','V','V',      
-            'P','P','P','P','P', 
-            'V','V'           
+            'R','R','R','R', // 0-3
+            'N','N','N',      // 4-6
+            'V','V','V','V', // 7-10 (TOTO BUDE 6.4.-9.4.)
+            'R','R','R',      // 11-13 (TOTO BUDE 10.4.-12.4. RANNÁ)
+            'N','N','N','N', // 14-17
+            'V','V','V',      // 18-20
+            'P','P','P','P','P', // 21-25
+            'V','V'           // 26-27
         ];
 
-        // OFFSET 14 ZABEZPEČÍ, ŽE 10.4. BUDE RANNÁ
-        const teamOffsets = { A: 7, B: 0, C: 14, D: 21 };
+        // OFFSET 21 PRE ZMENU C SEDÍ NA TVOJ POPIS (6.4. Voľno, 10.4. Ranná)
+        const teamOffsets = { A: 14, B: 7, C: 21, D: 0 };
 
         const months = [
             { n: "Január", d: 31, s: 3 }, { n: "Február", d: 28, s: 6 }, { n: "Marec", d: 31, s: 6 },
@@ -105,7 +101,7 @@
         ['A','B','C','D'].forEach(t => {
             const b = document.createElement('button');
             b.innerText = t;
-            b.className = `w-10 h-10 rounded-xl font-black border-2 ${t === currentTeam ? 'bg-orange-500 border-orange-600 text-white' : 'bg-white border-slate-100 text-slate-400'}`;
+            b.className = `w-10 h-10 rounded-xl font-black border-2 transition-all ${t === currentTeam ? 'bg-orange-500 border-orange-600 text-white' : 'bg-white border-slate-100 text-slate-400'}`;
             b.onclick = () => { currentTeam = t; render(); };
             document.getElementById('teamButtons').appendChild(b);
         });
