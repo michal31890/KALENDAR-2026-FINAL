@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - OPRAVA 10.4.</title>
+    <title>Continental 2026 - FIX 10.4.</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         .shutdown-pattern { background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(239, 68, 68, 0.1) 5px, rgba(239, 68, 68, 0.1) 10px); }
-        @media print { .print-hidden { display: none !important; } #calendarGrid { grid-template-columns: repeat(4, 1fr) !important; } }
     </style>
 </head>
 <body>
 
-    <div class="max-w-6xl mx-auto min-h-screen flex flex-col" id="appContainer">
-        <div id="controls" class="p-4 bg-white shadow-md border-b sticky top-0 z-[50] print-hidden">
-            <div class="flex justify-between items-center mb-4">
-                <h1 class="font-black text-xl italic uppercase tracking-tighter">Continental <span class="text-orange-500">2026</span></h1>
-                <div id="teamButtons" class="flex gap-1"></div>
-            </div>
+    <div class="max-w-6xl mx-auto min-h-screen flex flex-col">
+        <div class="p-4 bg-white shadow-sm border-b sticky top-0 z-50 flex justify-between items-center">
+            <h1 class="font-black text-xl italic uppercase tracking-tighter">Continental <span class="text-orange-500">2026</span></h1>
+            <div id="teamButtons" class="flex gap-1"></div>
         </div>
 
-        <div id="poster" class="bg-white flex-grow shadow-xl p-4">
-            <h2 class="text-2xl font-black text-slate-900 uppercase italic mb-4">ZMENA <span id="activeTeamLabel" class="text-orange-500">C</span></h2>
+        <div class="p-4">
+            <h2 class="text-2xl font-black text-slate-900 uppercase italic mb-4 tracking-tighter text-nowrap">ZMENA <span id="activeTeamLabel" class="text-orange-500">C</span></h2>
             <div id="calendarGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
         </div>
     </div>
@@ -32,20 +28,20 @@
     <script>
         let currentTeam = 'C';
 
-        // Tvoj 28-dňový cyklus upravený tak, aby index 0 bol 5.1. (R) aj 10.4. (R)
+        // Fixný 28-dňový cyklus Continental
         const cycle = [
-            'R','R','R','R', // 5.1. - 8.1. (Ranné)
-            'N','N','N',      // 9.1. - 11.1. (Nočné, So 12h)
-            'V','V','V','V', // 12.1. - 15.1. (Voľno)
-            'R','R','R',      // 16.1. - 18.1. (Ranné, So 12h)
-            'N','N','N','N', // 19.1. - 22.1. (Nočné)
-            'V','V','V',      // 23.1. - 25.1. (Voľno)
-            'P','P','P','P','P', // 26.1. - 30.1. (Poobedné)
-            'V','V'           // 31.1. - 1.2. (Voľno)
+            'R','R','R','R', // 1-4: Ranné (Pon-Štv)
+            'N','N','N',      // 5-7: Nočné (Pia-Ned)
+            'V','V','V','V', // 8-11: Voľno
+            'R','R','R',      // 12-14: Ranné (Pia-Ned) - 10. APRÍL PADNE SEM!
+            'N','N','N','N', // 15-18: Nočné
+            'V','V','V',      // 19-21: Voľno
+            'P','P','P','P','P', // 22-26: Poobedné
+            'V','V'           // 27-28: Voľno
         ];
 
-        // Offsets nastavené tak, aby C začínalo cyklus presne od 5.1.
-        const teamOffsets = { A: 21, B: 7, C: 0, D: 14 };
+        // OFFSET PRE C POSUNUTÝ TAK, ABY 10.4. BOLA RANNÁ
+        const teamOffsets = { A: 7, B: 0, C: 14, D: 21 };
 
         const months = [
             { n: "Január", d: 31, s: 3 }, { n: "Február", d: 28, s: 6 }, { n: "Marec", d: 31, s: 6 },
@@ -64,8 +60,8 @@
 
             months.forEach((m, mIdx) => {
                 const monthDiv = document.createElement('div');
-                monthDiv.className = "border rounded-2xl overflow-hidden shadow-sm bg-white";
-                let h = `<div class="bg-slate-900 text-white px-3 py-1.5 text-[10px] font-black uppercase tracking-wider">${m.n}</div><div class="p-2 grid grid-cols-7 gap-1">`;
+                monthDiv.className = "bg-white border rounded-3xl overflow-hidden shadow-sm";
+                let h = `<div class="bg-slate-900 text-white px-4 py-2 text-[11px] font-black uppercase italic">${m.n}</div><div class="p-3 grid grid-cols-7 gap-1">`;
                 
                 for(let i=0; i<m.s; i++) h += '<div></div>';
                 
@@ -86,8 +82,8 @@
                     if(type === 'P') { bg = "bg-[#FF8C00]"; txt = "text-white"; }
                     if(type === 'N') { bg = "bg-[#483D8B]"; txt = "text-white"; }
                     
-                    // Sobota 12h, Nedeľa 8h
-                    if(dayW === 6 && (type !== 'V')) {
+                    // Sobota 12h
+                    if(dayW === 6 && type !== 'V') {
                         if(type === 'R') bg = "bg-sky-400 text-black";
                         label = "12";
                     }
@@ -95,18 +91,17 @@
                     if(isH) { bg = "bg-red-600"; txt = "text-white"; label = "★"; }
                     else if(isShut) { bg = "bg-red-50 shutdown-pattern text-red-700"; }
 
-                    h += `<div class="h-8 flex flex-col items-center justify-center rounded-lg border text-[10px] font-black ${bg} ${txt}">${d}<span class="text-[7px]">${label === 'V' ? '' : label}</span></div>`;
+                    h += `<div class="h-9 flex flex-col items-center justify-center rounded-xl border text-[11px] font-black ${bg} ${txt}">${d}<span class="text-[7px] leading-none mt-0.5">${label === 'V' ? '' : label}</span></div>`;
                 }
                 monthDiv.innerHTML = h + '</div></div>';
                 grid.appendChild(monthDiv);
             });
-            lucide.createIcons();
         }
 
         ['A','B','C','D'].forEach(t => {
             const b = document.createElement('button');
             b.innerText = t;
-            b.className = `w-10 h-10 rounded-xl font-black ${t === currentTeam ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-400'}`;
+            b.className = `w-10 h-10 rounded-xl font-black border-2 transition-all ${t === currentTeam ? 'bg-orange-500 border-orange-600 text-white' : 'bg-white border-slate-100 text-slate-400'}`;
             b.onclick = () => { currentTeam = t; render(); };
             document.getElementById('teamButtons').appendChild(b);
         });
