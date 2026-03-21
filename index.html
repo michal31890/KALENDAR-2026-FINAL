@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - Posun o 1 deň</title>
+    <title>Continental 2026 - FIX FINAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -42,19 +42,20 @@
 
         const payDays = { 0: 9, 1: 6, 2: 6, 3: 9, 4: 8, 5: 5, 6: 7, 7: 7, 8: 7, 9: 7, 10: 6, 11: 7 };
         
+        // Pevný 28-dňový cyklus
         const cycle = [
-            'R','R','R','R', // Pondelok - Štvrtok
-            'N','N','N',      // Piatok - Nedeľa
-            'V','V','V','V', // Pondelok - Štvrtok
-            'R','R','R',      // Piatok - Nedeľa
-            'N','N','N','N', // Pondelok - Štvrtok
-            'V','V','V',      // Piatok - Nedeľa
-            'P','P','P','P','P', // Pondelok - Piatok
-            'V','V'           // Sobota - Nedeľa
+            'R','R','R','R', // Pon-Štv (index 0-3)
+            'N','N','N',      // Pia-Ned (index 4-6)
+            'V','V','V','V', // Pon-Štv (index 7-10)
+            'R','R','R',      // Pia-Ned (index 11-13)
+            'N','N','N','N', // Pon-Štv (index 14-17)
+            'V','V','V',      // Pia-Ned (index 18-20)
+            'P','P','P','P','P', // Pon-Pia (index 21-25)
+            'V','V'           // So-Ne (index 26-27)
         ];
 
-        // UPRAVENÝ OFFSET PRE C (POSUNUTÉ O 1 DEŇ)
-        const teamOffsets = { A: 13, B: 6, C: 27, D: 20 };
+        // VYPOCÍTANÝ OFFSET PRE C: Aby 5.1. bola index 0 (R) a 10.4. bola index 11 (R)
+        const teamOffsets = { A: 14, B: 7, C: 0, D: 21 };
 
         const months = [
             { n: "Január", d: 31, s: 3 }, { n: "Február", d: 28, s: 6 }, { n: "Marec", d: 31, s: 6 },
@@ -68,7 +69,7 @@
         function render() {
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
-            const refDate = new Date(2026, 0, 5); // Referenčný bod
+            const refDate = new Date(2026, 0, 5); // Pondelok 5.1.2026
 
             months.forEach((m, mIdx) => {
                 const monthDiv = document.createElement('div');
