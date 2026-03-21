@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Continental 2026 - PRESNÝ FOND</title>
+    <title>Continental 2026 - PRESNÝ CYKLUS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -24,7 +24,7 @@
 
         <div class="bg-white flex-grow shadow-2xl">
             <div class="p-3 bg-slate-900 text-white flex justify-between items-center uppercase font-black text-[10px] tracking-widest">
-                <span>Fond hodín (bez sviatkov a odstávok)</span>
+                <span>Fond hodín (Piatok ranná štart)</span>
                 <span class="text-orange-500 text-sm">Zmena <span id="activeTeamLabel">C</span></span>
             </div>
 
@@ -45,17 +45,21 @@
     <script>
         let currentTeam = 'C';
         
-        // Fixnutý cyklus: 4 dni R, 2 dni V, 4 dni N, 2 dni V, 4 dni P, 12 dní V (spolu 28 dní)
-        // Toto je najčastejší 4-zmenný kalendár v Púchove
+        // PRESNÝ CYKLUS PODĽA TVOJHO OPISU (28 DNÍ)
+        // Štartujeme piatkom: 3R (Pia, Sob, Ned), 4N, 3V, 5P, 2V, 4R, 3N, 4V (spolu 28 dní)
         const cycle = [
-            {t:'R',h:8},{t:'R',h:8},{t:'R',h:8},{t:'R',h:8},{t:'V',h:0},{t:'V',h:0},
-            {t:'N',h:8},{t:'N',h:8},{t:'N',h:8},{t:'N',h:8},{t:'V',h:0},{t:'V',h:0},
-            {t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'P',h:8},{t:'V',h:0},{t:'V',h:0},
-            {t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0},{t:'V',h:0}
+            {t:'R',h:8}, {t:'R',h:8}, {t:'R',h:8}, // 3 dni ranné
+            {t:'N',h:8}, {t:'N',h:8}, {t:'N',h:8}, {t:'N',h:8}, // 4 nočné
+            {t:'V',h:0}, {t:'V',h:0}, {t:'V',h:0}, // 3 dni voľno
+            {t:'P',h:8}, {t:'P',h:8}, {t:'P',h:8}, {t:'P',h:8}, {t:'P',h:8}, // 5 dní poobedná
+            {t:'V',h:0}, {t:'V',h:0}, // 2 dni voľno
+            {t:'R',h:8}, {t:'R',h:8}, {t:'R',h:8}, {t:'R',h:8}, // 4 ranné
+            {t:'N',h:8}, {t:'N',h:8}, {t:'N',h:8}, // 3 nočné
+            {t:'V',h:0}, {t:'V',h:0}, {t:'V',h:0}, {t:'V',h:0} // 4 dni voľno (doplnenie do 28)
         ];
 
-        // Offsety nastavené tak, aby C začínala 1.1.2026 voľnom a potom nabehla na R (podľa tvojho papiera)
-        const teamOffsets = { A: 14, B: 0, C: 21, D: 7 };
+        // Offsety aby to sedelo na zmeny (C začína piatkom rannou)
+        const teamOffsets = { A: 14, B: 7, C: 0, D: 21 };
         
         const months = [
             {n:"Január",d:31,s:3},{n:"Február",d:28,s:6},{n:"Marec",d:31,s:6},{n:"Apríl",d:30,s:2},
@@ -70,8 +74,8 @@
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
             
-            // Štartujeme presne od 1. januára 2026
-            const startDate = new Date(2026, 0, 1);
+            // Referenčný piatok (štart cyklu) - 2. január 2026 je piatok
+            const startDate = new Date(2026, 0, 2); 
 
             months.forEach((m, mIdx) => {
                 let totalH = 0;
@@ -84,10 +88,15 @@
                 for(let d=1; d<=m.d; d++) {
                     const currDate = new Date(2026, mIdx, d);
                     const dayOfWeek = currDate.getDay(); 
+                    
+                    // Výpočet indexu v cykle od referenčného piatku
                     const diff = Math.floor((currDate - startDate) / 86400000);
                     let idx = ((diff + teamOffsets[currentTeam]) % 28 + 28) % 28;
-                    const shift = cycle[idx];
                     
+                    // Dni pred 2.1.2026 (1.1.) ošetríme manuálne aby nebol error
+                    if (diff < 0 && mIdx === 0 && d === 1) idx = 27; 
+
+                    const shift = cycle[idx];
                     let bg = "bg-slate-50", txt = "text-slate-900", label = shift.t, hours = shift.h;
 
                     if(shift.t === 'R') bg = "bg-[#FFD700]";
@@ -105,8 +114,7 @@
                     const isHoliday = holidays.includes(`${mIdx}-${d}`);
                     const isShut = (mIdx === 3 && d >= 3 && d <= 6) || (mIdx === 6 && d >= 20 && d <= 26) || (mIdx === 11 && d >= 19 && d <= 31);
 
-                    // Sviatok a odstávka = 0 hodín
-                    if (isHoliday || isShut) { hours = 0; }
+                    if (isHoliday || isShut) hours = 0;
                     if(isShut) bg = "shutdown-active";
                     if(isHoliday) { bg = "bg-red-600"; txt = "text-white"; label = "★"; }
                     
